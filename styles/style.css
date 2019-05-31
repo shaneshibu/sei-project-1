@@ -1,3 +1,43 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
+
+}
+
+#grid {
+  width: 40%;
+  height: 80vh;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 50px auto;
+
+}
+
+.grid-item {
+  background: rgba(0, 0, 0, 0.1);
+  flex-basis: 10%;
+  border: 0.5px solid black;
+}
+
+.shape {
+  background: grey;
+  border: 2px solid black;
+}
+
+.red {
+  background: red;
+}
+
+.green {
   background: green;
+}
+
+.blue {
+  background: blue;
+}
+
+.yellow {
+  background: yellow;
 }
