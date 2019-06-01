@@ -17,13 +17,13 @@ class Tetromino {
   }
   initialPosition(name) {
     const initialPositions = {
-      I: [],
-      O: [],
-      T: [1,10,11,12],
-      J: [],
-      L: [],
-      S: [],
-      Z: []
+      I: [3, 4, 5, 6],
+      O: [4, 5, 14, 15],
+      T: [4, 13, 14, 15],
+      J: [3, 13, 14, 15],
+      L: [5, 13, 14, 15],
+      S: [5, 6, 14, 15],
+      Z: [4, 5, 15, 16]
     }
     this.positions = initialPositions[name]
   }
@@ -78,42 +78,7 @@ class Tetromino {
     this.positions[3] = rotatedPositions[this.name][this.orientation][3]
     // console.log(this.positions)
     this.orientation !== 270 ? this.orientation += 90 : this.orientation = 0
-    // if (this.orientation !== 270) {
-    //   this.orientation += 90
-    // } else {
-    //   this.orientation += 0
-    // }
-    // switch (this.name) {
-    //   case 'I':
-    //
-    //     break
-    //   case 'O':
-    //
-    //     break
-    //   case 'T':
-    //     if (this.orientation === 0) {
-    //       this.positions[0] = pos4
-    //       this.positions[1] = pos1
-    //       this.positions[2] = pos3
-    //       this.positions[3] = pos3 + width
-    //       this.orientation = 90
-    //     }
-    //     break
-    //   case 'J':
-    //
-    //     break
-    //   case 'L':
-    //
-    //     break
-    //   case 'S':
-    //
-    //     break
-    //   case 'Z':
-    //
-    //     break
-    //   default:
-    //     console.log('error rotating tetromino')
-    // }
+
     return this.positions
   }
 }
@@ -137,7 +102,7 @@ function init() {
 
   function generateNewShape() {
 
-    activeShape = new Tetromino('T')
+    activeShape = new Tetromino(shapeNames[Math.floor(Math.random() * shapeNames.length)])
     // const color = colors[Math.floor(Math.random() * 4)]
     playerIndexes = []
     activeShape.positions.forEach(position => playerIndexes.push(position))
@@ -208,8 +173,6 @@ function init() {
       playerIndexes[i] += width
     }
   }
-
-
 
   function updateGrid(indexes) {
     // squares.forEach(square => square.classList.remove('shape'))
