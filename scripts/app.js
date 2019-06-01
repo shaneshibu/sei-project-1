@@ -3,7 +3,8 @@ const width = 10
 const squares = []
 let playerIndexes = [0,1,2,11]
 let previousIndexes = [300,300,300,300]
-let timerId = null
+let dropTimerId = null
+let canMoveCheckTimerId = null
 const colors = ['red', 'green', 'blue', 'yellow']
 
 function init() {
@@ -82,7 +83,7 @@ function init() {
     // for (var i = 0; i < playerIndex.length; i++) {
     //   playerIndex[i]
     // }
-    playerIndexes.forEach((index) => squares[index].classList.add('shape'))
+    playerIndexes.forEach(index => squares[index].classList.add('shape'))
     // squares[playerIndex[i]].forEach(square => square.classList.add('shape'))
 
   }
@@ -147,19 +148,24 @@ function init() {
 
   function dropShapes() {
 
-    timerId = setInterval(() => {
-      if (canGoDown()) {
-        // previousIndexes = playerIndexes
-        savePreviousPosition(playerIndexes)
-        console.log(`previous ${previousIndexes}`)
-        console.log(`current ${playerIndexes}`)
-        moveDown()
-        console.log(`previous ${previousIndexes}`)
-        console.log(`current ${playerIndexes}`)
-        moveShape(previousIndexes)
-      } else {
+    canMoveCheckTimerId = setInterval(() => {
+      if (!canGoDown()) {
         generateShape()
       }
+    },100)
+
+    dropTimerId = setInterval(() => {
+      // if (canGoDown()) {
+        savePreviousPosition(playerIndexes)
+        // console.log(`previous ${previousIndexes}`)
+        // console.log(`current ${playerIndexes}`)
+        moveDown()
+        // console.log(`previous ${previousIndexes}`)
+        // console.log(`current ${playerIndexes}`)
+        moveShape(previousIndexes)
+      // } else {
+      //   generateShape()
+      // }
     }, 1000)
 
   }
