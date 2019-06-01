@@ -1,7 +1,8 @@
 const height = 20
 const width = 10
 const squares = []
-const playerIndexes = [0,1,2,11]
+let playerIndexes = [0,1,2,11]
+let previousIndexes = [300,300,300,300]
 let timerId = null
 const colors = ['red', 'green', 'blue', 'yellow']
 
@@ -22,6 +23,7 @@ function init() {
 
   function generateShape() {
     // const color = colors[Math.floor(Math.random() * 4)]
+    playerIndexes = [0,1,2,11]
     for (var i = 0; i < playerIndexes.length; i++) {
       squares[playerIndexes[i]].classList.add('shape')
 
@@ -29,15 +31,6 @@ function init() {
       // console.log(squares)
     }
 
-  }
-
-  function moveShape() {
-    squares.forEach(square => square.classList.remove('shape'))
-    // for (var i = 0; i < playerIndex.length; i++) {
-    //   playerIndex[i]
-    // }
-    playerIndexes.forEach((index) => squares[index].classList.add('shape'))
-    // squares[playerIndex[i]].forEach(square => square.classList.add('shape'))
   }
 
   function canGoLeft() {
@@ -84,12 +77,33 @@ function init() {
     }
   }
 
+  function moveShape(indexes) {
+    updateGrid(indexes)
+    // for (var i = 0; i < playerIndex.length; i++) {
+    //   playerIndex[i]
+    // }
+    playerIndexes.forEach((index) => squares[index].classList.add('shape'))
+    // squares[playerIndex[i]].forEach(square => square.classList.add('shape'))
+
+  }
+
+  function updateGrid(indexes) {
+    // squares.forEach(square => square.classList.remove('shape'))
+    //indexes.forEach(index => squares[index])
+    for (var i = 0; i < indexes.length; i++) {
+      squares[indexes[i]].classList.remove('shape')
+      console.log(squares[indexes[i]])
+    }
+  }
+
 
   function handleKeyDown(e) {
+
     console.log(e.keyCode)
+    savePreviousPosition(playerIndexes)
     let playerShouldMove = true
-    switch (e.keyCode) {
-      case 37:
+    switch (e.key) {
+      case 'ArrowLeft':
         if (canGoLeft()) {
           for (var i = 0; i < playerIndexes.length; i++) {
             playerIndexes[i]--
@@ -97,7 +111,7 @@ function init() {
           // console.log(canGoLeft())
         }
         break
-      case 39:
+      case 'ArrowRight':
         if (canGoRight()) {
           for (var i = 0; i < playerIndexes.length; i++) {
             playerIndexes[i]++
@@ -105,31 +119,46 @@ function init() {
         }
         // console.log(canGoRight())
         break
-      case 38:
-        if (playerIndexes - width >= 0) {
-          playerIndexes.forEach(item => item -= width)
-        }
+      case 'ArrowUp':
+
         break
-      case 40:
+      case 'ArrowDown':
         if (canGoDown()) {
           moveDown()
           // playerIndexes.forEach(item => {item += width})
+        } else {
+
         }
         break
       default:
         console.log('was not arrow')
         playerShouldMove = false
     }
+    console.log(previousIndexes)
     console.log(playerIndexes)
-    if (playerShouldMove) moveShape()
+    if (playerShouldMove) moveShape(previousIndexes)
+  }
+
+  function savePreviousPosition(indexes) {
+    for (var i = 0; i < indexes.length; i++) {
+      previousIndexes[i] = indexes[i]
+    }
   }
 
   function dropShapes() {
 
     timerId = setInterval(() => {
       if (canGoDown()) {
+        // previousIndexes = playerIndexes
+        savePreviousPosition(playerIndexes)
+        console.log(`previous ${previousIndexes}`)
+        console.log(`current ${playerIndexes}`)
         moveDown()
-        moveShape()
+        console.log(`previous ${previousIndexes}`)
+        console.log(`current ${playerIndexes}`)
+        moveShape(previousIndexes)
+      } else {
+        generateShape()
       }
     }, 1000)
 

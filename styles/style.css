@@ -23,7 +23,12 @@ body {
 
 .shape {
   background: grey;
-  border: 2px solid black;
+  /* border: 2px solid black; */
+  border: none;
+}
+
+.shape-inactive {
+  background:
 }
 
 .red {
