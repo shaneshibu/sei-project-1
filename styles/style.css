@@ -25,6 +25,7 @@ body {
   background: grey;
   /* border: 2px solid black; */
   border: none;
+  /* transition: 1s; */
 }
 
 .shape-inactive {

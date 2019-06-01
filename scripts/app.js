@@ -6,30 +6,119 @@ let previousIndexes = []
 let dropTimerId = null
 let canMoveCheckTimerId = null
 const colors = ['red', 'green', 'blue', 'yellow']
+const shapeNames = ['I', 'O', 'T', 'J', 'L', 'S', 'Z']
 let activeShape = null
 
 class Tetromino {
-  constructor() {
-    this.name = 'I'
-    this.positions = [0,1,2,11]
-    this.pos1 = this.positions[0]
-    this.pos2 = this.positions[1]
-    this.pos3 = this.positions[2]
-    this.pos4 = this.positions[3]
+  constructor(name) {
+    this.name = name
+    this.initialPosition(name)
     this.orientation = 0
+  }
+  initialPosition(name) {
+    const initialPositions = {
+      I: [],
+      O: [],
+      T: [1,10,11,12],
+      J: [],
+      L: [],
+      S: [],
+      Z: []
+    }
+    this.positions = initialPositions[name]
   }
   rotate(indexes) {
     const pos1 = indexes[0]
     const pos2 = indexes[1]
     const pos3 = indexes[2]
     const pos4 = indexes[3]
-    if (this.orientation === 0) {
-      this.positions = [pos1+1-width, pos2, pos3-1+width, pos4-1-width]
-      this.orientation = 90
+    const rotatedPositions = {
+      I: {
+        0: [],
+        90: [],
+        180: [],
+        270: []
+      },
+      T: {
+        0: [pos4, pos1, pos3, pos3 + width],
+        90: [pos4, pos1, pos3, pos3 - 1],
+        180: [pos4, pos1, pos3, pos3 - width],
+        270: [pos4, pos1, pos3, pos3 + 1]
+      },
+      J: {
+        0: [],
+        90: [],
+        180: [],
+        270: []
+      },
+      L: {
+        0: [],
+        90: [],
+        180: [],
+        270: []
+      },
+      S: {
+        0: [],
+        90: [],
+        180: [],
+        270: []
+      },
+      Z: {
+        0: [],
+        90: [],
+        180: [],
+        270: []
+      }
     }
+    // console.log('hello' + this.positions)
+    //this.positions = []
+    this.positions[0] = rotatedPositions[this.name][this.orientation][0]
+    this.positions[1] = rotatedPositions[this.name][this.orientation][1]
+    this.positions[2] = rotatedPositions[this.name][this.orientation][2]
+    this.positions[3] = rotatedPositions[this.name][this.orientation][3]
+    // console.log(this.positions)
+    this.orientation !== 270 ? this.orientation += 90 : this.orientation = 0
+    // if (this.orientation !== 270) {
+    //   this.orientation += 90
+    // } else {
+    //   this.orientation += 0
+    // }
+    // switch (this.name) {
+    //   case 'I':
+    //
+    //     break
+    //   case 'O':
+    //
+    //     break
+    //   case 'T':
+    //     if (this.orientation === 0) {
+    //       this.positions[0] = pos4
+    //       this.positions[1] = pos1
+    //       this.positions[2] = pos3
+    //       this.positions[3] = pos3 + width
+    //       this.orientation = 90
+    //     }
+    //     break
+    //   case 'J':
+    //
+    //     break
+    //   case 'L':
+    //
+    //     break
+    //   case 'S':
+    //
+    //     break
+    //   case 'Z':
+    //
+    //     break
+    //   default:
+    //     console.log('error rotating tetromino')
+    // }
     return this.positions
   }
 }
+
+
 
 function init() {
   // console.log()
@@ -47,10 +136,11 @@ function init() {
   }
 
   function generateNewShape() {
-    activeShape = new Tetromino()
+
+    activeShape = new Tetromino('T')
     // const color = colors[Math.floor(Math.random() * 4)]
     playerIndexes = []
-    activeShape.positions.forEach(index => playerIndexes.push(index))
+    activeShape.positions.forEach(position => playerIndexes.push(position))
     for (var i = 0; i < playerIndexes.length; i++) {
       squares[playerIndexes[i]].classList.add('shape')
       // squares[playerIndexes[i]].classList.add(color)
@@ -130,11 +220,12 @@ function init() {
     }
 
     playerIndexes.forEach(index => squares[index].classList.add('shape'))
+    console.log('updating grid ' + indexes)
   }
 
 
   function handleKeyDown(e) {
-
+    let rotatedPositions = null
     // console.log(e.key)
     savePreviousPosition(playerIndexes)
     let playerShouldMove = true
@@ -156,8 +247,11 @@ function init() {
         // console.log(canGoRight())
         break
       case 'ArrowUp':
-        console.log(activeShape.rotate(playerIndexes))
-        playerIndexes = activeShape.rotate(playerIndexes)
+        if (activeShape.name !== 'O') {
+          rotatedPositions = activeShape.rotate(playerIndexes).slice()
+          playerIndexes = []
+          rotatedPositions.forEach(position => playerIndexes.push(position))
+        }
         break
       case 'ArrowDown':
         if (canGoDown()) {
@@ -189,13 +283,13 @@ function init() {
         freezeCurrentShape()
         generateNewShape()
       }
-    },1000)
+    },100)
 
     dropTimerId = setInterval(() => {
       savePreviousPosition(playerIndexes)
       moveDown()
       updateGrid(previousIndexes)
-    }, 1000)
+    }, 2000)
 
   }
 
