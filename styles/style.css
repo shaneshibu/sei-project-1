@@ -28,7 +28,9 @@ body {
 }
 
 .shape-inactive {
-  background:
+  background: grey;
+  /* border: 2px solid black; */
+  border: none;
 }
 
 .red {

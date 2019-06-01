@@ -22,16 +22,27 @@ function init() {
 
   }
 
-  function generateShape() {
+  function generateNewShape() {
     // const color = colors[Math.floor(Math.random() * 4)]
     playerIndexes = [0,1,2,11]
     for (var i = 0; i < playerIndexes.length; i++) {
       squares[playerIndexes[i]].classList.add('shape')
-
       // squares[playerIndexes[i]].classList.add(color)
       // console.log(squares)
     }
+  }
 
+  function freezeCurrentShape() {
+
+    for (var i = 0; i < playerIndexes.length; i++) {
+      squares[playerIndexes[i]].classList.replace('shape', 'shape-inactive')
+      // squares[playerIndexes[i]].classList.add(color)
+      // console.log(squares)
+    }
+  }
+
+  function isOccupied(num) {
+    return squares[num].classList.contains('shape-inactive')
   }
 
   function canGoLeft() {
@@ -41,7 +52,8 @@ function init() {
     //   }
     // })
     for (var i = 0; i < playerIndexes.length; i++) {
-      if (!(playerIndexes[i] % width > 0)) {
+      const position = playerIndexes[i]
+      if (!(position % width > 0) || isOccupied(position-1)) {
         return false
       }
     }
@@ -55,7 +67,9 @@ function init() {
     //   }
     // })
     for (var i = 0; i < playerIndexes.length; i++) {
-      if (!(playerIndexes[i] % width < width - 1)) {
+      const position = playerIndexes[i]
+      // console.log(squares[position].classList)
+      if (!(position % width < width - 1) || isOccupied(position+1)) {
         return false
       }
     }
@@ -65,7 +79,8 @@ function init() {
 
   function canGoDown() {
     for (var i = 0; i < playerIndexes.length; i++) {
-      if (!(playerIndexes[i] + width < width * height)) {
+      const position = playerIndexes[i]
+      if (!(position + width < width * height) || isOccupied(position+width)) {
         return false
       }
     }
@@ -135,8 +150,8 @@ function init() {
         console.log('was not arrow')
         playerShouldMove = false
     }
-    console.log(previousIndexes)
-    console.log(playerIndexes)
+    // console.log(previousIndexes)
+    // console.log(playerIndexes)
     if (playerShouldMove) moveShape(previousIndexes)
   }
 
@@ -150,28 +165,21 @@ function init() {
 
     canMoveCheckTimerId = setInterval(() => {
       if (!canGoDown()) {
-        generateShape()
+        freezeCurrentShape()
+        generateNewShape()
       }
-    },100)
+    },1000)
 
     dropTimerId = setInterval(() => {
-      // if (canGoDown()) {
-        savePreviousPosition(playerIndexes)
-        // console.log(`previous ${previousIndexes}`)
-        // console.log(`current ${playerIndexes}`)
-        moveDown()
-        // console.log(`previous ${previousIndexes}`)
-        // console.log(`current ${playerIndexes}`)
-        moveShape(previousIndexes)
-      // } else {
-      //   generateShape()
-      // }
-    }, 1000)
+      savePreviousPosition(playerIndexes)
+      moveDown()
+      moveShape(previousIndexes)
+    }, 2000)
 
   }
 
   generateGrid()
-  generateShape()
+  generateNewShape()
   // moveShape()
   dropShapes()
 
