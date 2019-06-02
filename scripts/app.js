@@ -34,10 +34,10 @@ class Tetromino {
     const pos4 = indexes[3]
     const rotatedPositions = {
       I: {
-        0: [],
-        90: [],
-        180: [],
-        270: []
+        0: [pos3 - width, pos3, pos3 + width, pos3 + (2 * width)],
+        90: [pos3 - 2, pos3 - 1, pos3, pos3 + 1],
+        180: [pos2 - (2 * width), pos2 - width, pos2, pos2 + width],
+        270: [pos2 - 1, pos2, pos2 + 1, pos2 + 2]
       },
       T: {
         0: [pos4, pos1, pos3, pos3 + width],
@@ -76,9 +76,9 @@ class Tetromino {
     this.positions[1] = rotatedPositions[this.name][this.orientation][1]
     this.positions[2] = rotatedPositions[this.name][this.orientation][2]
     this.positions[3] = rotatedPositions[this.name][this.orientation][3]
-    // console.log(this.positions)
+    console.log(this.orientation)
     this.orientation !== 270 ? this.orientation += 90 : this.orientation = 0
-
+    console.log(this.orientation)
     return this.positions
   }
 }
@@ -252,7 +252,7 @@ function init() {
       savePreviousPosition(playerIndexes)
       moveDown()
       updateGrid(previousIndexes)
-    }, 2000)
+    }, 10000)
 
   }
 
