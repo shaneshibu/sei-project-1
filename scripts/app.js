@@ -46,10 +46,10 @@ class Tetromino {
         270: [pos4, pos1, pos3, pos3 + 1]
       },
       J: {
-        0: [],
-        90: [],
-        180: [],
-        270: []
+        0: [pos3 - width + 1, pos3 - width, pos3, pos3 + width],
+        90: [pos3 + 1 + width, pos3 + 1, pos3, pos3 - 1],
+        180: [pos3 + width - 1, pos3 + width, pos3, pos3 - width],
+        270: [pos3 - 1 - width, pos3 - 1, pos3, pos3 + 1]
       },
       L: {
         0: [],
