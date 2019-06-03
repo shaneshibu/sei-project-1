@@ -3,8 +3,11 @@ const width = 10
 const squares = []
 let playerIndexes = []
 let previousIndexes = []
+let rows = []
 let dropTimerId = null
 let canMoveCheckTimerId = null
+let checkRowsTimerId = null
+let keyDelayId = null
 const colors = ['red', 'green', 'blue', 'yellow']
 const shapeNames = ['I', 'O', 'T', 'J', 'L', 'S', 'Z']
 let activeShape = null
@@ -76,13 +79,12 @@ class Tetromino {
     this.positions[1] = rotatedPositions[this.name][this.orientation][1]
     this.positions[2] = rotatedPositions[this.name][this.orientation][2]
     this.positions[3] = rotatedPositions[this.name][this.orientation][3]
-    console.log(this.orientation)
+    // console.log(this.orientation)
     this.orientation !== 270 ? this.orientation += 90 : this.orientation = 0
-    console.log(this.orientation)
+    // console.log(this.orientation)
     return this.positions
   }
 }
-
 
 
 function init() {
@@ -91,13 +93,23 @@ function init() {
 
   function generateGrid() {
 
-    for (var i = 0; i < width * height; i++) {
+    for (let i = 0; i < width * height; i++) {
       const square = document.createElement('div')
       square.classList.add('grid-item')
       squares.push(square)
       grid.append(square)
     }
 
+    // fill rows array
+    for (let i = 0; i < height; i++) {
+      rows[i] = []
+      for (let j = 0; j < width; j++) {
+        rows[i].push( (i*width) + j )
+        //console.log(rows[i])
+        squares[(i*width) + j].dataset.row = i
+        squares[(i*width) + j].dataset.column = j
+      }
+    }
   }
 
   function generateNewShape() {
@@ -106,7 +118,7 @@ function init() {
     // const color = colors[Math.floor(Math.random() * 4)]
     playerIndexes = []
     activeShape.positions.forEach(position => playerIndexes.push(position))
-    for (var i = 0; i < playerIndexes.length; i++) {
+    for (let i = 0; i < playerIndexes.length; i++) {
       squares[playerIndexes[i]].classList.add('shape')
       // squares[playerIndexes[i]].classList.add(color)
       // console.log(squares)
@@ -115,7 +127,7 @@ function init() {
 
   function freezeCurrentShape() {
 
-    for (var i = 0; i < playerIndexes.length; i++) {
+    for (let i = 0; i < playerIndexes.length; i++) {
       squares[playerIndexes[i]].classList.replace('shape', 'shape-inactive')
       // squares[playerIndexes[i]].classList.add(color)
       // console.log(squares)
@@ -132,7 +144,7 @@ function init() {
     //     return false
     //   }
     // })
-    for (var i = 0; i < playerIndexes.length; i++) {
+    for (let i = 0; i < playerIndexes.length; i++) {
       const position = playerIndexes[i]
       if (!(position % width > 0) || isOccupied(position-1)) {
         return false
@@ -147,7 +159,7 @@ function init() {
     //     return false
     //   }
     // })
-    for (var i = 0; i < playerIndexes.length; i++) {
+    for (let i = 0; i < playerIndexes.length; i++) {
       const position = playerIndexes[i]
       // console.log(squares[position].classList)
       if (!(position % width < width - 1) || isOccupied(position+1)) {
@@ -159,7 +171,7 @@ function init() {
   }
 
   function canGoDown() {
-    for (var i = 0; i < playerIndexes.length; i++) {
+    for (let i = 0; i < playerIndexes.length; i++) {
       const position = playerIndexes[i]
       if (!(position + width < width * height) || isOccupied(position+width)) {
         return false
@@ -168,8 +180,22 @@ function init() {
     return true
   }
 
+  function canRotate(currentPositions, rotatedPositions) {
+
+    for (var i = 0; i < currentPositions.length; i++) {
+
+      const before = squares[currentPositions[i]].dataset.column
+      const after = squares[rotatedPositions[i]].dataset.column
+      console.log((before))
+      if ((before<3 && after>6) || (before>6 && after<3)) {
+        return false
+      }
+    }
+    return true
+  }
+
   function moveDown() {
-    for (var i = 0; i < playerIndexes.length; i++) {
+    for (let i = 0; i < playerIndexes.length; i++) {
       playerIndexes[i] += width
     }
   }
@@ -177,13 +203,13 @@ function init() {
   function updateGrid(indexes) {
     // squares.forEach(square => square.classList.remove('shape'))
     //indexes.forEach(index => squares[index])
-    for (var i = 0; i < indexes.length; i++) {
+    for (let i = 0; i < indexes.length; i++) {
       squares[indexes[i]].classList.remove('shape')
       // console.log(squares[indexes[i]])
     }
 
     playerIndexes.forEach(index => squares[index].classList.add('shape'))
-    console.log('updating grid ' + indexes)
+    //console.log('updating grid ' + indexes)
   }
 
 
@@ -191,11 +217,12 @@ function init() {
     let rotatedPositions = null
     // console.log(e.key)
     savePreviousPosition(playerIndexes)
-    let playerShouldMove = true
+    let gridShouldUpdate = true
+
     switch (e.key) {
       case 'ArrowLeft':
         if (canGoLeft()) {
-          for (var i = 0; i < playerIndexes.length; i++) {
+          for (let i = 0; i < playerIndexes.length; i++) {
             playerIndexes[i]--
           }
           // console.log(canGoLeft())
@@ -203,7 +230,7 @@ function init() {
         break
       case 'ArrowRight':
         if (canGoRight()) {
-          for (var i = 0; i < playerIndexes.length; i++) {
+          for (let i = 0; i < playerIndexes.length; i++) {
             playerIndexes[i]++
           }
         }
@@ -212,8 +239,13 @@ function init() {
       case 'ArrowUp':
         if (activeShape.name !== 'O') {
           rotatedPositions = activeShape.rotate(playerIndexes).slice()
-          playerIndexes = []
-          rotatedPositions.forEach(position => playerIndexes.push(position))
+          //console.log(canRotate(playerIndexes, rotatedPositions))
+          if (canRotate(playerIndexes, rotatedPositions)) {
+            playerIndexes = []
+            rotatedPositions.forEach(position => playerIndexes.push(position))
+          }
+        } else {
+          gridShouldUpdate = false
         }
         break
       case 'ArrowDown':
@@ -226,15 +258,15 @@ function init() {
         break
       default:
         console.log('was not arrow')
-        playerShouldMove = false
+        gridShouldUpdate = false
     }
     // console.log(previousIndexes)
     // console.log(playerIndexes)
-    if (playerShouldMove) updateGrid(previousIndexes)
+    if (gridShouldUpdate) updateGrid(previousIndexes)
   }
 
   function savePreviousPosition(indexes) {
-    for (var i = 0; i < indexes.length; i++) {
+    for (let i = 0; i < indexes.length; i++) {
       previousIndexes[i] = indexes[i]
     }
   }
@@ -244,24 +276,73 @@ function init() {
     canMoveCheckTimerId = setInterval(() => {
       if (!canGoDown()) {
         freezeCurrentShape()
-        generateNewShape()
+        // generateNewShape()
       }
     },100)
 
     dropTimerId = setInterval(() => {
       savePreviousPosition(playerIndexes)
-      moveDown()
-      updateGrid(previousIndexes)
-    }, 10000)
+      if (canGoDown()) {
+        moveDown()
+        updateGrid(previousIndexes)
+      } else {
+        generateNewShape()
+      }
+    }, 1000)
 
+  }
+
+  function checkCompletedRows() {
+    let completed = true
+
+    checkRowsTimerId = setInterval(() => {
+      rows.forEach(row => {
+        let count = 0
+        for (let i = row[0]; i < row[0] + width; i++) {
+          //console.log(squares[i])
+          if (squares[i].classList.contains('shape-inactive')) {
+            count++
+          }
+
+          //console.log(squares[i])
+          //console.log('inside for')
+        }
+        //console.log(squares[row[0]].dataset.row)
+        //console.log(count)
+        //console.log('inside forEach')
+        if (count===row.length) {
+          for (var i = 0; i < row.length; i++) {
+            squares[i].classList.add('new-class')
+            console.log('full row')
+          }
+        }
+      })
+
+      //console.log('outside forEach')
+    }, 2000)
   }
 
   generateGrid()
   generateNewShape()
   // moveShape()
   dropShapes()
+  checkCompletedRows()
 
-
+  // window.addEventListener('keydown', (e) => {
+  //   let keyDelayTime = null
+  //
+  //   //console.log(e.repeat)
+  //   e.repeat ? keyDelayTime = 500 : keyDelayTime = 0
+  //   keyDelayId = setTimeout(() => {
+  //     handleKeyDown(e)
+  //     console.log(keyDelayTime)
+  //     return
+  //   }, keyDelayTime)
+  //   // handleKeyDown(e)
+  // })
+  // window.addEventListener('keyup', () => {
+  //   clearTimeout(keyDelayId)
+  // })
   window.addEventListener('keydown', handleKeyDown)
 }
 
