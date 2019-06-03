@@ -34,6 +34,11 @@ body {
   border: none;
 }
 
+.completed-row {
+  display: none;
+  transition: 1s;
+}
+
 .red {
   background: red;
 }

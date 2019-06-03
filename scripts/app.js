@@ -96,6 +96,7 @@ function init() {
     for (let i = 0; i < width * height; i++) {
       const square = document.createElement('div')
       square.classList.add('grid-item')
+      square.dataset.position = i
       squares.push(square)
       grid.append(square)
     }
@@ -186,7 +187,7 @@ function init() {
 
       const before = squares[currentPositions[i]].dataset.column
       const after = squares[rotatedPositions[i]].dataset.column
-      console.log((before))
+      //console.log((before))
       if ((before<3 && after>6) || (before>6 && after<3)) {
         return false
       }
@@ -288,12 +289,31 @@ function init() {
       } else {
         generateNewShape()
       }
+      //console.log(squares[182])
     }, 1000)
 
   }
 
+  function moveRowsDown(row) {
+    const occupiedSquares = document.querySelectorAll('.shape-inactive')
+    console.log(occupiedSquares)
+    occupiedSquares.forEach(square => {
+
+      const squareRow = square.dataset.row
+      //console.log(squareRow)
+      const position = parseInt(square.dataset.position)
+      console.log(`position is ${position}`)
+      if (squareRow < row) {
+        square.classList.remove('shape-inactive')
+        console.log(squares[position])
+        console.log(squares[(position+width)])
+        squares[(position+width)].classList.add('shape-inactive')
+      }
+    })
+  }
+
   function checkCompletedRows() {
-    let completed = true
+    //let completed = true
 
     checkRowsTimerId = setInterval(() => {
       rows.forEach(row => {
@@ -307,14 +327,17 @@ function init() {
           //console.log(squares[i])
           //console.log('inside for')
         }
-        //console.log(squares[row[0]].dataset.row)
+        //sconsole.log(squares[row[0]].dataset.row, count, row.length)
         //console.log(count)
         //console.log('inside forEach')
         if (count===row.length) {
-          for (var i = 0; i < row.length; i++) {
-            squares[i].classList.add('new-class')
-            console.log('full row')
+          const filledRow = squares[row[0]].dataset.row
+
+          for (let i = row[0]; i < row[0] + width; i++) {
+            squares[i].classList.remove('shape-inactive')
+            //console.log('full row')
           }
+          moveRowsDown(filledRow)
         }
       })
 
