@@ -8,6 +8,8 @@ let dropTimerId = null
 let canMoveCheckTimerId = null
 let checkRowsTimerId = null
 let keyDelayId = null
+let score = 0
+let gameTimerId = null
 const colors = ['red', 'green', 'blue', 'yellow']
 const shapeNames = ['I', 'O', 'T', 'J', 'L', 'S', 'Z']
 let activeShape = null
@@ -171,8 +173,8 @@ function init() {
     // return playerIndexes[0] % width < width - 1 ? true : false
   }
 
-  function canGoDown() {
-    for (let i = 0; i < playerIndexes.length; i++) {
+  function canGoDown(playerIndexes) {
+    for (let i = playerIndexes.length-1; i >= 0; i--) {
       const position = playerIndexes[i]
       if (!(position + width < width * height) || isOccupied(position+width)) {
         return false
@@ -250,7 +252,7 @@ function init() {
         }
         break
       case 'ArrowDown':
-        if (canGoDown()) {
+        if (canGoDown(playerIndexes)) {
           moveDown()
           // playerIndexes.forEach(item => {item += width})
         } else {
@@ -275,7 +277,7 @@ function init() {
   function dropShapes() {
 
     canMoveCheckTimerId = setInterval(() => {
-      if (!canGoDown()) {
+      if (!canGoDown(playerIndexes)) {
         freezeCurrentShape()
         // generateNewShape()
       }
@@ -283,7 +285,7 @@ function init() {
 
     dropTimerId = setInterval(() => {
       savePreviousPosition(playerIndexes)
-      if (canGoDown()) {
+      if (canGoDown(playerIndexes)) {
         moveDown()
         updateGrid(previousIndexes)
       } else {
@@ -298,7 +300,7 @@ function init() {
     const occupiedSquares = document.querySelectorAll('.shape-inactive')
     console.log(occupiedSquares)
     occupiedSquares.forEach(square => {
-
+      
       const squareRow = square.dataset.row
       //console.log(squareRow)
       const position = parseInt(square.dataset.position)
@@ -345,11 +347,29 @@ function init() {
     }, 2000)
   }
 
+  function startGameTimer() {
+    const timeSpan = document.querySelector('#time')
+    const gameStartTime = new Date()
+
+    gameTimerId = setInterval(() => {
+      const gameCurrentTime = new Date()
+      let time = (gameCurrentTime - gameStartTime)
+      time = Math.floor(time/1000)
+      let minutes = Math.floor(time / 60)
+      let seconds = time
+      minutes < 1 ? minutes = 0 : seconds = time - (minutes*60)
+      if (minutes<10) minutes = '0' + minutes
+      if (seconds<10) seconds = '0' + seconds
+      timeSpan.innerText = `${minutes}:${seconds}`
+    }, 1000)
+  }
+
   generateGrid()
   generateNewShape()
   // moveShape()
   dropShapes()
   checkCompletedRows()
+  startGameTimer()
 
   // window.addEventListener('keydown', (e) => {
   //   let keyDelayTime = null
