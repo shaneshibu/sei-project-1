@@ -30,27 +30,29 @@ aside {
   display: flex;
   flex-wrap: wrap;
   margin: 10px auto;
-
+  border: 0.5px solid black;
+  background: rgba(100, 100, 100, 0.1);
 }
 
 .grid-item {
-  background: rgba(0, 0, 0, 0.1);
+  /* background: rgba(0, 0, 0, 0.1); */
   flex-basis: 10%;
   height: 5%;
-  border: 0.5px solid black;
+  border: 0.5px solid rgba(0, 0, 0, 0.1);
 }
 
 .shape {
-  background: grey;
+  /* background: grey; */
   /* border: 2px solid black; */
   border: none;
   /* transition: 1s; */
 }
 
 .shape-inactive {
-  background: grey;
+  background: rgba(0, 0, 0, 0.2);
   /* border: 2px solid black; */
   border: none;
+  border-radius: 2px;
 }
 
 .completed-row {
