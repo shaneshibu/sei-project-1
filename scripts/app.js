@@ -276,6 +276,7 @@ function init() {
     if (gridShouldUpdate) updateGrid(previousIndexes)
   }
 
+
   function savePreviousPosition(indexes) {
     for (let i = 0; i < indexes.length; i++) {
       previousIndexes[i] = indexes[i]
@@ -306,20 +307,32 @@ function init() {
 
   function moveRowsDown(row) {
     const occupiedSquares = document.querySelectorAll('.shape-inactive')
+    console.log(occupiedSquares)
     //console.log(occupiedSquares)
-    occupiedSquares.forEach(square => {
-
+    // occupiedSquares.forEach(square => {
+    //
+    //   const squareRow = square.dataset.row
+    //   //console.log(squareRow)
+    //   const position = parseInt(square.dataset.position)
+    //   // console.log(`position is ${position}`)
+    //   if (squareRow < row) {
+    //     square.classList.remove('shape-inactive')
+    //     // console.log(squares[position])
+    //     // console.log(squares[(position+width)])
+    //     squares[(position+width)].classList.add('shape-inactive')
+    //   }
+    // })
+    for (let i = occupiedSquares.length-1; i >=0 ; i--) {
+      const square = occupiedSquares[i]
       const squareRow = square.dataset.row
-      //console.log(squareRow)
       const position = parseInt(square.dataset.position)
-      // console.log(`position is ${position}`)
       if (squareRow < row) {
         square.classList.remove('shape-inactive')
-        // console.log(squares[position])
+        //console.log(squares[position])
         // console.log(squares[(position+width)])
         squares[(position+width)].classList.add('shape-inactive')
       }
-    })
+    }
 
   }
 
@@ -327,9 +340,10 @@ function init() {
     //let completed = true
     const scoreSpan = document.querySelector('#score')
     let filledRows = ''
-    console.log(filledRows.length)
+
     checkRowsTimerId = setInterval(() => {
       filledRows = []
+      //console.log(`filledRows when iniialised ${filledRows.length}`)
       rows.forEach(row => {
         let count = 0
         for (let i = row[0]; i < row[0] + width; i++) {
@@ -337,7 +351,6 @@ function init() {
           if (squares[i].classList.contains('shape-inactive')) {
             count++
           }
-
           //console.log(squares[i])
           //console.log('inside for')
         }
@@ -350,19 +363,19 @@ function init() {
           for (let i = row[0]; i < row[0] + width; i++) {
             squares[i].classList.remove('shape-inactive')
             //console.log('full row')
-            score++
           }
           filledRows.push(filledRow)
-          console.log(filledRows.length)
+          score++
           scoreSpan.innerText = score
         }
       })
+      //console.log(`filledRows at end ${filledRows.length}`)
+      console.log(filledRows)
       if (filledRows.length > 0) {
         filledRows.forEach(row => moveRowsDown(row))
-
       }
       //console.log('outside forEach')
-    }, 1000)
+    }, 5000)
   }
 
   function startGameTimer() {
@@ -388,6 +401,9 @@ function init() {
   dropShapes()
   checkCompletedRows()
   startGameTimer()
+  const shape = document.querySelector('.shape')
+  document.stylesheet.cssRules[0].style.backgroundColor = 'blue'
+  console.log(shape.style.CSSStyleDeclaration)
 
   // window.addEventListener('keydown', (e) => {
   //   let keyDelayTime = null
