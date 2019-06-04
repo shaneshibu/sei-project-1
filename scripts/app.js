@@ -402,8 +402,8 @@ function init() {
   checkCompletedRows()
   startGameTimer()
   const shape = document.querySelector('.shape')
-  document.styleSheets[0].cssRules[0].style.backgroundColor = 'blue'
-  console.log(shape.style.CSSStyleDeclaration)
+  document.styleSheets[0].cssRules[1].style.backgroundColor = 'blue'
+  console.log(document.styleSheets[0].cssRules[1])
 
   // window.addEventListener('keydown', (e) => {
   //   let keyDelayTime = null
