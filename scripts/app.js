@@ -271,7 +271,6 @@ function init() {
     //console.log('updating grid ' + indexes)
   }
 
-
   function handleKeyDown(e) {
     let rotatedPositions = null
     // console.log(e.key)
@@ -323,7 +322,6 @@ function init() {
     // console.log(playerIndexes)
     if (gridShouldUpdate) updateGrid(previousIndexes)
   }
-
 
   function savePreviousPosition(indexes) {
     for (let i = 0; i < indexes.length; i++) {
@@ -463,8 +461,8 @@ function init() {
       if (reachedTop()) {
         stopGameTimer()
         console.log('you lost')
+        clearInterval(checkLossId)
       }
-      clearInterval(checkLossId)
     },100)
   }
 
