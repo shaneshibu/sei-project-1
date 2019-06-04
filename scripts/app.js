@@ -173,13 +173,21 @@ function init() {
     // return playerIndexes[0] % width < width - 1 ? true : false
   }
 
-  function canGoDown(playerIndexes) {
-    for (let i = playerIndexes.length-1; i >= 0; i--) {
-      const position = playerIndexes[i]
-      if (!(position + width < width * height) || isOccupied(position+width)) {
-        return false
+  function canGoDown(playerIndexes/*, square*/) {
+
+    // if (playerIndexes) {
+      for (let i = playerIndexes.length-1; i >= 0; i--) {
+        const position = playerIndexes[i]
+        if (!(position + width < width * height) || isOccupied(position+width)) {
+          return false
+        }
       }
-    }
+    // } /else {
+    //   const position = square.dataset.positions
+    //   if (!(position + width < width * height) || isOccupied(position+width)) {
+    //     return false
+    //   }
+    // }
     return true
   }
 
@@ -298,26 +306,30 @@ function init() {
 
   function moveRowsDown(row) {
     const occupiedSquares = document.querySelectorAll('.shape-inactive')
-    console.log(occupiedSquares)
+    //console.log(occupiedSquares)
     occupiedSquares.forEach(square => {
-      
+
       const squareRow = square.dataset.row
       //console.log(squareRow)
       const position = parseInt(square.dataset.position)
-      console.log(`position is ${position}`)
+      // console.log(`position is ${position}`)
       if (squareRow < row) {
         square.classList.remove('shape-inactive')
-        console.log(squares[position])
-        console.log(squares[(position+width)])
+        // console.log(squares[position])
+        // console.log(squares[(position+width)])
         squares[(position+width)].classList.add('shape-inactive')
       }
     })
+
   }
 
   function checkCompletedRows() {
     //let completed = true
-
+    const scoreSpan = document.querySelector('#score')
+    let filledRows = ''
+    console.log(filledRows.length)
     checkRowsTimerId = setInterval(() => {
+      filledRows = []
       rows.forEach(row => {
         let count = 0
         for (let i = row[0]; i < row[0] + width; i++) {
@@ -338,13 +350,19 @@ function init() {
           for (let i = row[0]; i < row[0] + width; i++) {
             squares[i].classList.remove('shape-inactive')
             //console.log('full row')
+            score++
           }
-          moveRowsDown(filledRow)
+          filledRows.push(filledRow)
+          console.log(filledRows.length)
+          scoreSpan.innerText = score
         }
       })
+      if (filledRows.length > 0) {
+        filledRows.forEach(row => moveRowsDown(row))
 
+      }
       //console.log('outside forEach')
-    }, 2000)
+    }, 1000)
   }
 
   function startGameTimer() {
