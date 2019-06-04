@@ -8,6 +8,7 @@ let dropTimerId = null
 let canMoveCheckTimerId = null
 let checkRowsTimerId = null
 let keyDelayId = null
+let checkLossId = null
 let score = 0
 let gameTimerId = null
 const colors = ['red', 'green', 'blue', 'yellow']
@@ -18,6 +19,7 @@ class Tetromino {
   constructor(name) {
     this.name = name
     this.initialPosition(name)
+    this.setColor(name)
     this.orientation = 0
   }
   initialPosition(name) {
@@ -31,6 +33,18 @@ class Tetromino {
       Z: [4, 5, 15, 16]
     }
     this.positions = initialPositions[name]
+  }
+  setColor(name) {
+    const colors = {
+      I: 'turquoise',
+      O: 'yellow',
+      T: 'purple',
+      J: 'blue',
+      L: 'orange',
+      S: 'green',
+      Z: 'red'
+    }
+    this.color = colors[name]
   }
   rotate(indexes) {
     const pos1 = indexes[0]
@@ -92,6 +106,7 @@ class Tetromino {
 function init() {
   // console.log()
   const grid = document.querySelector('#grid')
+  const thisCSS = document.styleSheets[0]
 
   function generateGrid() {
 
@@ -120,6 +135,19 @@ function init() {
     activeShape = new Tetromino(shapeNames[Math.floor(Math.random() * shapeNames.length)])
     // const color = colors[Math.floor(Math.random() * 4)]
     playerIndexes = []
+    // document.styleSheets[0].cssRules[1].style['backgroundColor'] = 'green'
+    // console.log(document.styleSheets[0].cssRules[1])
+    //console.log(thisCSS.cssRules)
+    //const cssRulesArray = []
+    //console.log(activeShape)
+    for (var i = 0; i < thisCSS.cssRules.length; i++) {
+      if (thisCSS.cssRules[i].selectorText==='.shape') {
+        thisCSS.cssRules[i].style['backgroundColor'] = activeShape.color
+      }
+      // cssRulesArray.push(thisCSS.cssRules[i])
+      // console.log(thisCSS.cssRules[i].selectorText)
+    }
+
     activeShape.positions.forEach(position => playerIndexes.push(position))
     for (let i = 0; i < playerIndexes.length; i++) {
       squares[playerIndexes[i]].classList.add('shape')
@@ -191,18 +219,38 @@ function init() {
     return true
   }
 
+  function canGoUp() {
+    for (let i = playerIndexes.length-1; i >= 0; i--) {
+      const position = playerIndexes[i]
+      if (position - width < 0) {
+        //console.log('cant go up')
+        return false
+      }
+    }
+    return true
+  }
+
   function canRotate(currentPositions, rotatedPositions) {
 
     for (var i = 0; i < currentPositions.length; i++) {
 
       const before = squares[currentPositions[i]].dataset.column
       const after = squares[rotatedPositions[i]].dataset.column
+      const afterRow = squares[rotatedPositions[i]].dataset.row
+
       //console.log((before))
-      if ((before<3 && after>6) || (before>6 && after<3)) {
+      if ((before<3 && after>6) || (before>6 && after<3) || (afterRow<0)) {
         return false
       }
     }
     return true
+  }
+
+  function reachedTop() {
+    if (!canGoDown(playerIndexes) && !canGoUp()) {
+      return true
+    }
+    return false
   }
 
   function moveDown() {
@@ -288,7 +336,7 @@ function init() {
     canMoveCheckTimerId = setInterval(() => {
       if (!canGoDown(playerIndexes)) {
         freezeCurrentShape()
-        // generateNewShape()
+        generateNewShape()
       }
     },100)
 
@@ -298,7 +346,7 @@ function init() {
         moveDown()
         updateGrid(previousIndexes)
       } else {
-        generateNewShape()
+        //generateNewShape()
       }
       //console.log(squares[182])
     }, 1000)
@@ -370,21 +418,21 @@ function init() {
         }
       })
       //console.log(`filledRows at end ${filledRows.length}`)
-      console.log(filledRows)
+      //console.log(filledRows)
       if (filledRows.length > 0) {
         filledRows.forEach(row => moveRowsDown(row))
       }
       //console.log('outside forEach')
-    }, 5000)
+    }, 1000)
   }
 
   function startGameTimer() {
     const timeSpan = document.querySelector('#time')
     const gameStartTime = new Date()
-
+    let time = 0
     gameTimerId = setInterval(() => {
       const gameCurrentTime = new Date()
-      let time = (gameCurrentTime - gameStartTime)
+      time = (gameCurrentTime - gameStartTime)
       time = Math.floor(time/1000)
       let minutes = Math.floor(time / 60)
       let seconds = time
@@ -392,18 +440,37 @@ function init() {
       if (minutes<10) minutes = '0' + minutes
       if (seconds<10) seconds = '0' + seconds
       timeSpan.innerText = `${minutes}:${seconds}`
+      // if (time>60) stopGameTimer()
     }, 1000)
+
+
   }
 
-  generateGrid()
-  generateNewShape()
-  // moveShape()
-  dropShapes()
-  checkCompletedRows()
-  startGameTimer()
-  const shape = document.querySelector('.shape')
-  document.styleSheets[0].cssRules[1].style.backgroundColor = 'blue'
-  console.log(document.styleSheets[0].cssRules[1])
+  function stopGameTimer() {
+    clearInterval(gameTimerId)
+  }
+
+  function gameStart() {
+    generateGrid()
+    generateNewShape()
+    // moveShape()
+    dropShapes()
+    checkCompletedRows()
+    startGameTimer()
+
+    checkLossId = setInterval(() => {
+      console.log(reachedTop())
+      if (reachedTop()) {
+        stopGameTimer()
+        console.log('you lost')
+      }
+      clearInterval(checkLossId)
+    },100)
+  }
+
+
+
+  gameStart()
 
   // window.addEventListener('keydown', (e) => {
   //   let keyDelayTime = null
