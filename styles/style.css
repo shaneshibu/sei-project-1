@@ -11,22 +11,22 @@ body {
 
 main {
   flex-basis: 100%;
-  height: 90%;
+  height: 95%;
   margin: 0;
 }
 
-aside {
-  flex-basis: 100%;
-  height: 7%;
-  margin: 0;
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-around;
-}
-
-#grid {
+#gameboard1 {
   width: 100%;
   height: 100%;
+}
+
+#gameboard2 {
+  display: none;
+}
+
+#grid1 {
+  width: 100%;
+  height: calc(95% - 20px);
   display: flex;
   flex-wrap: wrap;
   margin: 10px auto;
@@ -38,7 +38,7 @@ aside {
   /* background: rgba(0, 0, 0, 0.1); */
   flex-basis: 10%;
   height: 5%;
-  border: 0.5px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .shape {
@@ -60,14 +60,46 @@ aside {
   transition: 1s;
 }
 
-footer {
+.message {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 50px;
+  top: calc(47.5% - 25px);
+  text-align: center;
+}
+
+aside {
   flex-basis: 100%;
-  height: 3%;
+  height: 5%;
   margin: 0;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
+}
 
+.shape-queue {
+  display: none;
+}
+
+.score-tile {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+  flex-basis: 100%;
+}
+
+footer {
+  flex-basis: 100%;
+  height: 5%;
+  margin: 0;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+}
+
+footer > p {
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .red {

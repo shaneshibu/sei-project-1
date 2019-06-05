@@ -8,12 +8,36 @@
   </head>
   <body>
     <main>
-      <div id="grid"></div>
+      <div id="gameboard1" class="game-board">
+        <p class="message"></p>
+        <div id="grid1" class="grid"></div>
+        <aside>
+          <div id="shapequeue1"class="shape-queue">
+
+          </div>
+          <div id="score-tile1" class="score-tile">
+            <p>Time: <span id="timespan1" class="time">00:00</span></p>
+            <p>Score: <span id="score1">0</span></p>
+          </div>
+
+        </aside>
+      </div>
+      <div id="gameboard2" class="game-board">
+        <div id="grid2" class="grid">
+          <!-- <p class="message">You Lost!</p> -->
+        </div>
+        <aside>
+          <div id="shapequeue1"class="shape-queue">
+
+          </div>
+          <div id="score-tile2" class="score-tile">
+            <p>Time: <span id="timespan2" class="time">00:00</span></p>
+            <p>Score: <span id="score2">0</span></p>
+          </div>
+        </aside>
+      </div>
     </main>
-    <aside class="">
-      <p>Time: <span id="time">00:00</span></p>
-      <p>Score: <span id="score">0</span></p>
-    </aside>
+
     <footer>
       <p>Classic Theme</p>
       <p>Dark Theme</p>

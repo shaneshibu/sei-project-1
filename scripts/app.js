@@ -14,6 +14,7 @@ let gameTimerId = null
 const colors = ['red', 'green', 'blue', 'yellow']
 const shapeNames = ['I', 'O', 'T', 'J', 'L', 'S', 'Z']
 let activeShape = null
+const displayMessages = ['You Win!', 'You Lose', 'Game Over']
 
 class Tetromino {
   constructor(name) {
@@ -105,7 +106,7 @@ class Tetromino {
 
 function init() {
   // console.log()
-  const grid = document.querySelector('#grid')
+  const grid1 = document.querySelector('#grid1')
   const thisCSS = document.styleSheets[0]
 
   function generateGrid() {
@@ -115,7 +116,7 @@ function init() {
       square.classList.add('grid-item')
       square.dataset.position = i
       squares.push(square)
-      grid.append(square)
+      grid1.append(square)
     }
 
     // fill rows array
@@ -351,6 +352,11 @@ function init() {
 
   }
 
+  function stopDropShapes() {
+    clearInterval(canMoveCheckTimerId)
+    clearInterval(dropTimerId)
+  }
+
   function moveRowsDown(row) {
     const occupiedSquares = document.querySelectorAll('.shape-inactive')
     console.log(occupiedSquares)
@@ -384,7 +390,7 @@ function init() {
 
   function checkCompletedRows() {
     //let completed = true
-    const scoreSpan = document.querySelector('#score')
+    const scoreSpan1 = document.querySelector('#score1')
     let filledRows = ''
 
     checkRowsTimerId = setInterval(() => {
@@ -412,7 +418,7 @@ function init() {
           }
           filledRows.push(filledRow)
           score++
-          scoreSpan.innerText = score
+          scoreSpan1.innerText = score
         }
       })
       //console.log(`filledRows at end ${filledRows.length}`)
@@ -425,7 +431,8 @@ function init() {
   }
 
   function startGameTimer() {
-    const timeSpan = document.querySelector('#time')
+    const timeSpan1 = document.querySelector('#timespan1')
+    const timeSpan2 = document.querySelector('#timespan2')
     const gameStartTime = new Date()
     let time = 0
     gameTimerId = setInterval(() => {
@@ -437,7 +444,8 @@ function init() {
       minutes < 1 ? minutes = 0 : seconds = time - (minutes*60)
       if (minutes<10) minutes = '0' + minutes
       if (seconds<10) seconds = '0' + seconds
-      timeSpan.innerText = `${minutes}:${seconds}`
+      timeSpan1.innerText = `${minutes}:${seconds}`
+      timeSpan2.innerText = `${minutes}:${seconds}`
       // if (time>60) stopGameTimer()
     }, 1000)
 
@@ -448,6 +456,19 @@ function init() {
     clearInterval(gameTimerId)
   }
 
+  function checkLoss() {
+    checkLossId = setInterval(() => {
+      console.log(reachedTop())
+      if (reachedTop()) {
+        gameEnd()
+      }
+    },100)
+  }
+
+  function stopCheckLoss() {
+    clearInterval(checkLossId)
+  }
+
   function gameStart() {
     generateGrid()
     generateNewShape()
@@ -456,15 +477,27 @@ function init() {
     checkCompletedRows()
     startGameTimer()
 
-    checkLossId = setInterval(() => {
-      console.log(reachedTop())
-      if (reachedTop()) {
-        stopGameTimer()
-        console.log('you lost')
-        clearInterval(checkLossId)
-      }
-    },100)
+    checkLoss()
+
   }
+
+  function gameEnd() {
+    stopGameTimer()
+    stopCheckLoss()
+    stopDropShapes()
+    displayMessage()
+  }
+
+  function displayMessage() {
+    const message1 = document.querySelector('#gameboard1 p.message')
+    message1.innerText = displayMessages[2]
+    for (var i = 0; i < thisCSS.cssRules.length; i++) {
+      if (thisCSS.cssRules[i].selectorText==='.message') {
+        thisCSS.cssRules[i].style['display'] = 'unset'
+      }
+    }
+  }
+
 
 
 
