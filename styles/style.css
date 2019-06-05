@@ -15,23 +15,45 @@ main {
   margin: 0;
 }
 
-#gameboard1 {
-  width: 100%;
-  height: 100%;
+#player1 {
+
 }
 
-#gameboard2 {
-  display: none;
+.player-tile {
+  width: 100%;
+  height: 95%;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: flex-end;
+}
+
+#gameboard1 {
+
+}
+
+.game-board {
+  width: 100%;
+  height: 95%;
+  padding: 10px 5px;
+
 }
 
 #grid1 {
+  /* width: calc(100% - 10px);
+  height: calc(100% - 20px); */
   width: 100%;
-  height: calc(95% - 20px);
+  height: 100%;
+  /* margin: 10px 5px; */
+
+}
+
+.grid {
   display: flex;
   flex-wrap: wrap;
-  margin: 10px auto;
+  margin: 0 auto;
   border: 0.5px solid black;
   background: rgba(100, 100, 100, 0.1);
+  max-width: 450px;
 }
 
 .grid-item {
@@ -63,16 +85,22 @@ main {
 .message {
   display: none;
   position: absolute;
+  margin: 0;
   width: 100%;
-  height: 50px;
-  top: calc(47.5% - 25px);
+  /* height: 50px; */
+  height: 0;
+  top: calc(47.5% - 50px);
   text-align: center;
+  font-size: 40px;
+  font-weight: bold;
+  z-index: 2;
 }
 
 aside {
   flex-basis: 100%;
   height: 5%;
   margin: 0;
+  /* padding: 5px; */
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
@@ -89,10 +117,15 @@ aside {
   flex-basis: 100%;
 }
 
+#player2 {
+  display: none;
+}
+
 footer {
   flex-basis: 100%;
   height: 5%;
   margin: 0;
+  padding: 5px;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
@@ -116,4 +149,62 @@ footer > p {
 
 .yellow {
   background: yellow;
+}
+
+
+ /* TABLETS */
+@media screen and (min-width: 650px) {
+  body {
+
+  }
+
+  main {
+
+  }
+
+  #player1 {
+
+  }
+
+  #gameboard1 {
+    min-width: 450px;
+    flex: 2;
+  }
+
+  #grid1 {
+  }
+
+  .message {
+
+  }
+
+  aside {
+    /* flex-basis: 50%; */
+    flex: 1;
+    flex-flow: column wrap;
+    padding: 10px 5px;
+  }
+
+  .shape-queue {
+    display: flex;
+    flex-flow: column wrap;
+    height: 300px;
+    width: 50px;
+  }
+
+  .score-tile {
+  }
+
+  footer {
+  }
+
+  footer > p {
+  }
+}
+
+/* DESKTOPS */
+@media screen and (min-width: 1024px) {
+ body {
+     background: green;
+   }
 }
