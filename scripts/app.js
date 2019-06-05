@@ -13,6 +13,7 @@ let score = 0
 let gameTimerId = null
 const colors = ['red', 'green', 'blue', 'yellow']
 const shapeNames = ['I', 'O', 'T', 'J', 'L', 'S', 'Z']
+const shapeQueue = []
 let activeShape = null
 const displayMessages = ['You Win!', 'You Lose', 'Game Over']
 
@@ -108,6 +109,11 @@ function init() {
   // console.log()
   const grid1 = document.querySelector('#grid1')
   const thisCSS = document.styleSheets[0]
+  const first = document.querySelector('#shapequeue1 > div:first-of-type')
+  const second = document.querySelector('#shapequeue1 > div:nth-of-type(2)')
+  const third = document.querySelector('#shapequeue1 > div:nth-of-type(3)')
+  const fourth = document.querySelector('#shapequeue1 > div:nth-of-type(4)')
+  const fifth = document.querySelector('#shapequeue1 > div:nth-of-type(5)')
 
   function generateGrid() {
 
@@ -131,11 +137,60 @@ function init() {
     }
   }
 
+  function generateShapeQueue() {
+    generateNewShape()
+    generateNewShape()
+    generateNewShape()
+    generateNewShape()
+    generateNewShape()
+    generateNewShape()
+    //console.log(shapeQueue)
+    // for (var i = 0; i < shapeQueue.length; i++) {
+    //   shapeQueue[i]
+    // }
+
+
+  }
+
+  function displayQueue() {
+    const s = document.querySelector('#shapequeue1')
+    console.log(s)
+    console.log(s.children.length)
+
+    for (var i = 0; i < s.children.length; i++) {
+      const div = s.children[i]
+      const name = shapeQueue[i].name
+      // div.style.background = `'url('../assets/${name}.png')'`
+      div.style.backgroundImage = 'url("./assets/' + name + '.png")'
+      console.log(div.style)
+    }
+
+    // first.innerText = shapeQueue[0].name
+    // second.innerText = shapeQueue[1].name
+    // third.innerText = shapeQueue[2].name
+    // fourth.innerText = shapeQueue[3].name
+    // fifth.innerText = shapeQueue[4].name
+  }
+
   function generateNewShape() {
 
-    activeShape = new Tetromino(shapeNames[Math.floor(Math.random() * shapeNames.length)])
-    // const color = colors[Math.floor(Math.random() * 4)]
+    const newShape = new Tetromino(shapeNames[Math.floor(Math.random() * shapeNames.length)])
+
+    shapeQueue.push(newShape)
+
+  }
+
+  function selectNextShape() {
+    activeShape = shapeQueue.shift()
+    //console.log(activeShape)
     playerIndexes = []
+    activeShape.positions.forEach(position => playerIndexes.push(position))
+    for (let i = 0; i < playerIndexes.length; i++) {
+      squares[playerIndexes[i]].classList.add('shape')
+      //console.log(squares)
+    }
+    // const color = colors[Math.floor(Math.random() * 4)]
+
     // document.styleSheets[0].cssRules[1].style['backgroundColor'] = 'green'
     // console.log(document.styleSheets[0].cssRules[1])
     //console.log(thisCSS.cssRules)
@@ -148,13 +203,7 @@ function init() {
       // cssRulesArray.push(thisCSS.cssRules[i])
       // console.log(thisCSS.cssRules[i].selectorText)
     }
-
-    activeShape.positions.forEach(position => playerIndexes.push(position))
-    for (let i = 0; i < playerIndexes.length; i++) {
-      squares[playerIndexes[i]].classList.add('shape')
-      // squares[playerIndexes[i]].classList.add(color)
-      // console.log(squares)
-    }
+    //console.log(shapeQueue)
   }
 
   function freezeCurrentShape() {
@@ -336,6 +385,8 @@ function init() {
       if (!canGoDown(playerIndexes)) {
         freezeCurrentShape()
         generateNewShape()
+        selectNextShape()
+        displayQueue()
       }
     },100)
 
@@ -432,7 +483,7 @@ function init() {
 
   function startGameTimer() {
     const timeSpan1 = document.querySelector('#timespan1')
-    const timeSpan2 = document.querySelector('#timespan2')
+    //const timeSpan2 = document.querySelector('#timespan2')
     const gameStartTime = new Date()
     let time = 0
     gameTimerId = setInterval(() => {
@@ -445,7 +496,7 @@ function init() {
       if (minutes<10) minutes = '0' + minutes
       if (seconds<10) seconds = '0' + seconds
       timeSpan1.innerText = `${minutes}:${seconds}`
-      timeSpan2.innerText = `${minutes}:${seconds}`
+      //timeSpan2.innerText = `${minutes}:${seconds}`
       // if (time>60) stopGameTimer()
     }, 1000)
 
@@ -471,7 +522,10 @@ function init() {
 
   function gameStart() {
     generateGrid()
-    generateNewShape()
+    //generateNewShape()
+    generateShapeQueue()
+    selectNextShape()
+    displayQueue()
     // moveShape()
     dropShapes()
     checkCompletedRows()

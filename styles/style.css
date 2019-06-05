@@ -168,6 +168,7 @@ footer > p {
 
   #gameboard1 {
     min-width: 450px;
+    flex-basis: unset;
     flex: 2;
   }
 
@@ -179,7 +180,8 @@ footer > p {
   }
 
   aside {
-    /* flex-basis: 50%; */
+    flex-basis: auto;
+    height: auto;
     flex: 1;
     flex-flow: column wrap;
     padding: 10px 5px;
@@ -188,8 +190,15 @@ footer > p {
   .shape-queue {
     display: flex;
     flex-flow: column wrap;
-    height: 300px;
-    width: 50px;
+    /* min-width: 100px; */
+    align-items: center;
+  }
+
+  .shape-queue > div {
+    height: 85px;
+    width: 85px;
+    /* background-image: url('../assets/I.png'); */
+    background-repeat: no-repeat;
   }
 
   .score-tile {
