@@ -3,6 +3,7 @@ const width = 10
 const squares = []
 let playerIndexes = []
 let previousIndexes = []
+let ghostIndexes = []
 let rows = []
 let dropTimerId = null
 let canMoveCheckTimerId = null
@@ -109,11 +110,13 @@ function init() {
   // console.log()
   const grid1 = document.querySelector('#grid1')
   const thisCSS = document.styleSheets[0]
-  const first = document.querySelector('#shapequeue1 > div:first-of-type')
-  const second = document.querySelector('#shapequeue1 > div:nth-of-type(2)')
-  const third = document.querySelector('#shapequeue1 > div:nth-of-type(3)')
-  const fourth = document.querySelector('#shapequeue1 > div:nth-of-type(4)')
-  const fifth = document.querySelector('#shapequeue1 > div:nth-of-type(5)')
+  const loadPage = document.querySelector('#load-page')
+  const startButton = document.querySelector('#start-game-button')
+  const start1Player = document.querySelector('#start1Player')
+  const start2Player = document.querySelector('#start2Player')
+  const player1Tile = document.querySelector('#player1')
+  const player2Tile = document.querySelector('#player2')
+  const message1 = document.querySelector('#gameboard1 p.message')
 
   function generateGrid() {
 
@@ -154,15 +157,15 @@ function init() {
 
   function displayQueue() {
     const s = document.querySelector('#shapequeue1')
-    console.log(s)
-    console.log(s.children.length)
+    //console.log(s)
+    //console.log(s.children.length)
 
     for (var i = 0; i < s.children.length; i++) {
       const div = s.children[i]
       const name = shapeQueue[i].name
       // div.style.background = `'url('../assets/${name}.png')'`
       div.style.backgroundImage = 'url("./assets/' + name + '.png")'
-      console.log(div.style)
+      //console.log(div.style)
     }
 
     // first.innerText = shapeQueue[0].name
@@ -196,14 +199,33 @@ function init() {
     //console.log(thisCSS.cssRules)
     //const cssRulesArray = []
     //console.log(activeShape)
-    for (var i = 0; i < thisCSS.cssRules.length; i++) {
-      if (thisCSS.cssRules[i].selectorText==='.shape') {
+    for (let i = 0; i < thisCSS.cssRules.length; i++) {
+      if (thisCSS.cssRules[i].selectorText === '.shape' || thisCSS.cssRules[i].selectorText === '.shape-ghost') {
         thisCSS.cssRules[i].style['backgroundColor'] = activeShape.color
       }
       // cssRulesArray.push(thisCSS.cssRules[i])
       // console.log(thisCSS.cssRules[i].selectorText)
     }
     //console.log(shapeQueue)
+  }
+
+  function displayGhost() {
+    ghostIndexes = []
+    //playerIndexes.forEach(index => ghostIndexes.push(index))
+    for (let i = 0; i < playerIndexes.length; i++) {
+      ghostIndexes.push(playerIndexes[i])
+    }
+
+    while (canGoDown(ghostIndexes)) {
+      //ghostIndexes.forEach(index => index = index + width + width + width + width)
+      //console.log(ghostIndexes)
+      for (let i = 0; i < ghostIndexes.length; i++) {
+        ghostIndexes[i] += width
+      }
+    }
+    for (let i = 0; i < ghostIndexes.length; i++) {
+      squares[ghostIndexes[i]].classList.add('shape-ghost')
+    }
   }
 
   function freezeCurrentShape() {
@@ -312,12 +334,18 @@ function init() {
   function updateGrid(indexes) {
     // squares.forEach(square => square.classList.remove('shape'))
     //indexes.forEach(index => squares[index])
-    for (let i = 0; i < indexes.length; i++) {
-      squares[indexes[i]].classList.remove('shape')
-      // console.log(squares[indexes[i]])
-    }
+    // for (let i = 0; i < indexes.length; i++) {
+    //   //console.log(squares[indexes[i]])
+    //   squares[indexes[i]].classList.remove('shape')
+    //   // console.log(squares[indexes[i]])
+    // }
+    squares.forEach(square => square.classList.remove('shape-ghost'))
+    squares.forEach(square => square.classList.remove('shape'))
 
     playerIndexes.forEach(index => squares[index].classList.add('shape'))
+    displayGhost()
+    // console.log(document.querySelectorAll('.shape-ghost'))
+    // console.log(playerIndexes)
     //console.log('updating grid ' + indexes)
   }
 
@@ -388,7 +416,7 @@ function init() {
         selectNextShape()
         displayQueue()
       }
-    },100)
+    },200)
 
     dropTimerId = setInterval(() => {
       savePreviousPosition(playerIndexes)
@@ -468,7 +496,7 @@ function init() {
             //console.log('full row')
           }
           filledRows.push(filledRow)
-          score++
+          score += 10 * filledRows.length
           scoreSpan1.innerText = score
         }
       })
@@ -509,7 +537,7 @@ function init() {
 
   function checkLoss() {
     checkLossId = setInterval(() => {
-      console.log(reachedTop())
+      //console.log(reachedTop())
       if (reachedTop()) {
         gameEnd()
       }
@@ -521,11 +549,16 @@ function init() {
   }
 
   function gameStart() {
+    toggleVisibility(loadPage)
+    toggleVisibility(start1Player)
+    toggleVisibility(start2Player)
+    toggleVisibility(player1Tile)
     generateGrid()
     //generateNewShape()
     generateShapeQueue()
     selectNextShape()
     displayQueue()
+    window.addEventListener('keydown', handleKeyDown)
     // moveShape()
     dropShapes()
     checkCompletedRows()
@@ -540,10 +573,12 @@ function init() {
     stopCheckLoss()
     stopDropShapes()
     displayMessage()
+    window.addEventListener('click', goBackToLoadPage)
+    window.removeEventListener('keydown', handleKeyDown)
+
   }
 
   function displayMessage() {
-    const message1 = document.querySelector('#gameboard1 p.message')
     message1.innerText = displayMessages[2]
     for (var i = 0; i < thisCSS.cssRules.length; i++) {
       if (thisCSS.cssRules[i].selectorText==='.message') {
@@ -552,10 +587,36 @@ function init() {
     }
   }
 
+  function goBackToLoadPage() {
+    // player1Tile.style.display = 'none'
+    // player2Tile.style.display = 'none'
+    // loadPage.style.display = 'flex'
+    toggleVisibility(player1Tile)
+    toggleVisibility(player2Tile)
+    toggleVisibility(loadPage)
+    window.removeEventListener('click', goBackToLoadPage)
+  }
 
+  function toggleVisibility(element) {
+    for (var i = 0; i < thisCSS.cssRules.length; i++) {
+      if (thisCSS.cssRules[i].selectorText===`#${element.id}`) {
+        if (thisCSS.cssRules[i].style['display'] === 'none') {
+          thisCSS.cssRules[i].style['display'] = 'flex'
+        } else {
+          thisCSS.cssRules[i].style['display'] = 'none'
+        }
+        console.log(element.id, thisCSS.cssRules[i].style['display'])
+      }
+    }
+    // console.log(element, element.style.display)
+    // if (element.style.display === 'none') {
+    //   element.style.display = 'flex'
+    //   return
+    // } else {
+    //   element.style.display = 'none'
+    // }
+  }
 
-
-  gameStart()
 
   // window.addEventListener('keydown', (e) => {
   //   let keyDelayTime = null
@@ -572,7 +633,13 @@ function init() {
   // window.addEventListener('keyup', () => {
   //   clearTimeout(keyDelayId)
   // })
-  window.addEventListener('keydown', handleKeyDown)
+
+  startButton.addEventListener('click', () => {
+    toggleVisibility(start1Player)
+    toggleVisibility(start2Player)
+  })
+
+  start1Player.addEventListener('click', gameStart)
 }
 
 window.addEventListener('DOMContentLoaded', init)
