@@ -25,14 +25,24 @@ main {
   max-width: 450px;
 }
 
-#load-page > div {
+#start-game {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
 }
 
-#load-page > div > p{
+#load-page > div > p {
   flex-basis: 100%;
+}
+
+#instructions {
+  display: none;
+}
+
+#high-scores {
+  display: none;
+  flex-flow: column wrap;
+  justify-content: space-around;
 }
 
 #start1Player {

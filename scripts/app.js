@@ -142,8 +142,12 @@ function init() {
   const player1Tile = document.querySelector('#player1')
   const player2Tile = document.querySelector('#player2')
   const message1 = document.querySelector('#gameboard1 p.message')
+  const instructionsButton = document.querySelector('#instructions-button')
+  const instructions = document.querySelector('#instructions')
+  const highScoreButton = document.querySelector('#high-score-button')
+  const highScoreDiv = document.querySelector('#high-scores')
+  const highScoreResults = document.querySelectorAll('#high-scores > small')
   const themeButtons = document.querySelectorAll('footer > p')
-  const highScoreDiv = document.querySelector('.high-scores')
 
   function generateGrid() {
 
@@ -536,7 +540,6 @@ function init() {
       // if (time>60) stopGameTimer()
     }, 1000)
 
-
   }
 
   function stopGameTimer() {
@@ -593,7 +596,6 @@ function init() {
   function displayMessage() {
     let highScoreMessage = ''
     if (checkIfHighScore()) highScoreMessage = '\nNew High Score!\n' + score
-    console.log(highScoreMessage)
     message1.innerText = displayMessages[2] + highScoreMessage
     for (var i = 0; i < thisCSS.cssRules.length; i++) {
       if (thisCSS.cssRules[i].selectorText==='.message') {
@@ -601,7 +603,6 @@ function init() {
       }
     }
   }
-
 
   function checkIfHighScore() {
     for (var i = 0; i < highScores.length; i++) {
@@ -628,16 +629,48 @@ function init() {
     highScores.push({name: player1Name, score: score})
     //console.log(highScores)
     sortHighScores()
+    saveHighScores()
+    displayHighScores()
 
   }
 
   function sortHighScores() {
-    console.log(highScores)
     highScores.sort((a,b) => {
       // b.score - a.score
       return a.score > b.score ?  -1 : 1
     })
+  }
+
+  function displayHighScores() {
+    for (var i = 0; i < highScores.length; i++) {
+      const playerName = highScores[i].name
+      const playerScore = highScores[i].score
+      highScoreResults[i].innerText = `${playerName} : ${playerScore}`
+      console.log(playerName, playerScore, highScoreResults[i])
+    }
+  }
+
+  function saveHighScores() {
     console.log(highScores)
+    for (var i = 1; i <= highScores.length; i++) {
+      localStorage.setItem(`player${i}Name`, highScores[i-1].name)
+      localStorage.setItem(`player${i}Score`, highScores[i-1].score)
+    }
+  }
+
+  function loadHighScores() {
+    if (localStorage.length > 0) {
+      for (let i = 1; i <= highScores.length; i++) {
+        highScores[i-1].name = localStorage.getItem(`player${i}Name`)
+        highScores[i-1].score = localStorage.getItem(`player${i}Score`)
+      }
+    } else {
+      for (let i = 1; i <= highScores.length; i++) {
+        localStorage.setItem(`player${i}Name`, `Player ${i}`)
+        localStorage.setItem(`player${i}Score`, 0)
+      }
+    }
+
   }
 
   function resetGrid() {
@@ -687,6 +720,36 @@ function init() {
     }
   }
 
+  function loadGame() {
+    loadHighScores()
+    displayHighScores()
+
+    startButton.addEventListener('click', () => {
+      toggleVisibility(start1Player)
+      if (window.innerWidth >= 1024) {
+        toggleVisibility(start2Player)
+      }
+
+    })
+
+    start1Player.addEventListener('click', gameStart)
+
+    instructionsButton.addEventListener('click', () => {
+      toggleVisibility(instructions)
+    })
+
+    highScoreButton.addEventListener('click', () => {
+      toggleVisibility(highScoreDiv)
+    })
+
+    themeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        theme = button.classList[0]
+        changeTheme(theme)
+      })
+    })
+  }
+
 
   // window.addEventListener('keydown', (e) => {
   //   let keyDelayTime = null
@@ -704,22 +767,7 @@ function init() {
   //   clearTimeout(keyDelayId)
   // })
 
-  startButton.addEventListener('click', () => {
-    toggleVisibility(start1Player)
-    if (window.innerWidth >= 1024) {
-      toggleVisibility(start2Player)
-    }
-
-  })
-
-  start1Player.addEventListener('click', gameStart)
-
-  themeButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      theme = button.classList[0]
-      changeTheme(theme)
-    })
-  })
+  loadGame()
 
 }
 
