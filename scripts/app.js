@@ -11,6 +11,8 @@ let checkRowsTimerId = null
 // let keyDelayId = null
 let checkLossId = null
 let score = 0
+let player1Name = ''
+let player2Name = ''
 let gameTimerId = null
 const shapeNames = ['I', 'O', 'T', 'J', 'L', 'S', 'Z']
 const shapeQueue = []
@@ -141,6 +143,7 @@ function init() {
   const player2Tile = document.querySelector('#player2')
   const message1 = document.querySelector('#gameboard1 p.message')
   const themeButtons = document.querySelectorAll('footer > p')
+  const highScoreDiv = document.querySelector('.high-scores')
 
   function generateGrid() {
 
@@ -556,9 +559,10 @@ function init() {
   function gameStart() {
     toggleVisibility(loadPage)
     toggleVisibility(start1Player)
-    toggleVisibility(start2Player)
+    //toggleVisibility(start2Player)
     toggleVisibility(player1Tile)
     generateGrid()
+    getPlayerName()
     //generateNewShape()
     generateShapeQueue()
     selectNextShape()
@@ -580,11 +584,17 @@ function init() {
     displayMessage()
     window.addEventListener('click', goBackToLoadPage)
     window.removeEventListener('keydown', handleKeyDown)
+  }
 
+  function getPlayerName() {
+    player1Name = window.prompt('Enter Your Name', 'Player 1')
   }
 
   function displayMessage() {
-    message1.innerText = displayMessages[2]
+    let highScoreMessage = ''
+    if (checkIfHighScore()) highScoreMessage = '\nNew High Score!\n' + score
+    console.log(highScoreMessage)
+    message1.innerText = displayMessages[2] + highScoreMessage
     for (var i = 0; i < thisCSS.cssRules.length; i++) {
       if (thisCSS.cssRules[i].selectorText==='.message') {
         thisCSS.cssRules[i].style['display'] = 'unset'
@@ -592,13 +602,60 @@ function init() {
     }
   }
 
+
+  function checkIfHighScore() {
+    for (var i = 0; i < highScores.length; i++) {
+      if (score > highScores[i]['score']) {
+        //highScores.pop()
+        updateHighScore()
+        return true
+      }
+    }
+    return false
+  }
+
+  function updateHighScore() {
+    // const newHighScores = []
+    //console.log(highScores)
+    // for (var i = 0; i < highScores.length; i++) {
+    //   if (score > highScores[i]['score']) {
+    //     newHighScores.push({name: player1Name, score: score})
+    //   } else {
+    //     newHighScores.push(highScores[i])
+    //   }
+    // }
+    highScores.pop()
+    highScores.push({name: player1Name, score: score})
+    //console.log(highScores)
+    sortHighScores()
+
+  }
+
+  function sortHighScores() {
+    console.log(highScores)
+    highScores.sort((a,b) => {
+      // b.score - a.score
+      return a.score > b.score ?  -1 : 1
+    })
+    console.log(highScores)
+  }
+
+  function resetGrid() {
+    squares.forEach(square => {
+      square.classList.remove('shape')
+      square.classList.remove('shape-ghost')
+      square.classList.remove('shape-inactive')
+    })
+  }
+
   function goBackToLoadPage() {
     // player1Tile.style.display = 'none'
     // player2Tile.style.display = 'none'
     // loadPage.style.display = 'flex'
     toggleVisibility(player1Tile)
-    toggleVisibility(player2Tile)
+    //toggleVisibility(player2Tile)
     toggleVisibility(loadPage)
+    resetGrid()
     window.removeEventListener('click', goBackToLoadPage)
   }
 
@@ -610,7 +667,7 @@ function init() {
         } else {
           thisCSS.cssRules[i].style['display'] = 'none'
         }
-        console.log(element.id, thisCSS.cssRules[i].style['display'])
+        //console.log(element.id, thisCSS.cssRules[i].style['display'])
       }
     }
     // console.log(element, element.style.display)
@@ -649,7 +706,10 @@ function init() {
 
   startButton.addEventListener('click', () => {
     toggleVisibility(start1Player)
-    toggleVisibility(start2Player)
+    if (window.innerWidth >= 1024) {
+      toggleVisibility(start2Player)
+    }
+
   })
 
   start1Player.addEventListener('click', gameStart)

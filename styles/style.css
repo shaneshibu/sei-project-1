@@ -277,6 +277,6 @@ footer > p {
 /* DESKTOPS */
 @media screen and (min-width: 1024px) {
  body {
-     background: green;
+     /* background: green; */
    }
 }
