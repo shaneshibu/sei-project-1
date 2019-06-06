@@ -4,19 +4,42 @@ const squares = []
 let playerIndexes = []
 let previousIndexes = []
 let ghostIndexes = []
-let rows = []
+const rows = []
 let dropTimerId = null
 let canMoveCheckTimerId = null
 let checkRowsTimerId = null
-let keyDelayId = null
+// let keyDelayId = null
 let checkLossId = null
 let score = 0
 let gameTimerId = null
-const colors = ['red', 'green', 'blue', 'yellow']
 const shapeNames = ['I', 'O', 'T', 'J', 'L', 'S', 'Z']
 const shapeQueue = []
 let activeShape = null
 const displayMessages = ['You Win!', 'You Lose', 'Game Over']
+let theme = null
+let gameSpeed = 1000
+const highScores = [
+  {
+    name: '',
+    score: 0
+  },
+  {
+    name: '',
+    score: 0
+  },
+  {
+    name: '',
+    score: 0
+  },
+  {
+    name: '',
+    score: 0
+  },
+  {
+    name: '',
+    score: 0
+  }
+]
 
 class Tetromino {
   constructor(name) {
@@ -117,6 +140,7 @@ function init() {
   const player1Tile = document.querySelector('#player1')
   const player2Tile = document.querySelector('#player2')
   const message1 = document.querySelector('#gameboard1 p.message')
+  const themeButtons = document.querySelectorAll('footer > p')
 
   function generateGrid() {
 
@@ -333,14 +357,13 @@ function init() {
 
   function updateGrid(indexes) {
     // squares.forEach(square => square.classList.remove('shape'))
-    //indexes.forEach(index => squares[index])
-    // for (let i = 0; i < indexes.length; i++) {
-    //   //console.log(squares[indexes[i]])
-    //   squares[indexes[i]].classList.remove('shape')
-    //   // console.log(squares[indexes[i]])
-    // }
+    indexes.forEach(index => squares[index])
+    for (let i = 0; i < indexes.length; i++) {
+      //console.log(squares[indexes[i]])
+      squares[indexes[i]].classList.remove('shape')
+      // console.log(squares[indexes[i]])
+    }
     squares.forEach(square => square.classList.remove('shape-ghost'))
-    squares.forEach(square => square.classList.remove('shape'))
 
     playerIndexes.forEach(index => squares[index].classList.add('shape'))
     displayGhost()
@@ -388,8 +411,6 @@ function init() {
         if (canGoDown(playerIndexes)) {
           moveDown()
           // playerIndexes.forEach(item => {item += width})
-        } else {
-
         }
         break
       default:
@@ -427,7 +448,7 @@ function init() {
         //generateNewShape()
       }
       //console.log(squares[182])
-    }, 1000)
+    }, gameSpeed)
 
   }
 
@@ -438,29 +459,13 @@ function init() {
 
   function moveRowsDown(row) {
     const occupiedSquares = document.querySelectorAll('.shape-inactive')
-    console.log(occupiedSquares)
     //console.log(occupiedSquares)
-    // occupiedSquares.forEach(square => {
-    //
-    //   const squareRow = square.dataset.row
-    //   //console.log(squareRow)
-    //   const position = parseInt(square.dataset.position)
-    //   // console.log(`position is ${position}`)
-    //   if (squareRow < row) {
-    //     square.classList.remove('shape-inactive')
-    //     // console.log(squares[position])
-    //     // console.log(squares[(position+width)])
-    //     squares[(position+width)].classList.add('shape-inactive')
-    //   }
-    // })
     for (let i = occupiedSquares.length-1; i >=0 ; i--) {
-      const square = occupiedSquares[i]
-      const squareRow = square.dataset.row
-      const position = parseInt(square.dataset.position)
-      if (squareRow < row) {
-        square.classList.remove('shape-inactive')
-        //console.log(squares[position])
-        // console.log(squares[(position+width)])
+      const occupiedSquare = occupiedSquares[i]
+      const occupiedSquareRow = occupiedSquare.dataset.row
+      const position = parseInt(occupiedSquare.dataset.position)
+      if (occupiedSquareRow < row) {
+        occupiedSquare.classList.remove('shape-inactive')
         squares[(position+width)].classList.add('shape-inactive')
       }
     }
@@ -474,7 +479,7 @@ function init() {
 
     checkRowsTimerId = setInterval(() => {
       filledRows = []
-      //console.log(`filledRows when iniialised ${filledRows.length}`)
+
       rows.forEach(row => {
         let count = 0
         for (let i = row[0]; i < row[0] + width; i++) {
@@ -483,11 +488,9 @@ function init() {
             count++
           }
           //console.log(squares[i])
-          //console.log('inside for')
         }
         //sconsole.log(squares[row[0]].dataset.row, count, row.length)
         //console.log(count)
-        //console.log('inside forEach')
         if (count===row.length) {
           const filledRow = squares[row[0]].dataset.row
 
@@ -504,9 +507,11 @@ function init() {
       //console.log(filledRows)
       if (filledRows.length > 0) {
         filledRows.forEach(row => moveRowsDown(row))
+        if (gameSpeed > 100) gameSpeed -= filledRows.length * 50
+        stopDropShapes()
+        dropShapes()
       }
-      //console.log('outside forEach')
-    }, 1000)
+    }, 200)
   }
 
   function startGameTimer() {
@@ -617,6 +622,14 @@ function init() {
     // }
   }
 
+  function changeTheme(theme) {
+    if (theme === 'classic') {
+      document.body.style.backgroundColor = 'white'
+    } else {
+      document.body.style.backgroundColor = 'black'
+    }
+  }
+
 
   // window.addEventListener('keydown', (e) => {
   //   let keyDelayTime = null
@@ -640,6 +653,14 @@ function init() {
   })
 
   start1Player.addEventListener('click', gameStart)
+
+  themeButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      theme = button.classList[0]
+      changeTheme(theme)
+    })
+  })
+
 }
 
 window.addEventListener('DOMContentLoaded', init)
