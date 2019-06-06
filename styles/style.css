@@ -50,7 +50,7 @@ main {
 }
 
 #start2Player {
-  display: none;
+  display: none !important;
 }
 
 #player1 {

@@ -208,7 +208,25 @@ function init() {
 
   function generateNewShape() {
 
-    const newShape = new Tetromino(shapeNames[Math.floor(Math.random() * shapeNames.length)])
+    let newShape = new Tetromino(shapeNames[Math.floor(Math.random() * shapeNames.length)])
+
+    // if 4 S or Z tetrominos created in a row, do not create another
+    let count = 0
+    console.log(shapeQueue.length)
+    if (shapeQueue.length >= 4) {
+      for (var i = shapeQueue.length-1; i >= shapeQueue.length - 4; i--) {
+        console.log(shapeQueue[i])
+        if (shapeQueue[i].name === 'S' || shapeQueue[i].name === 'Z') {
+          count++
+        }
+      }
+      if (count === 4) {
+        while (newShape.name === 'S' || newShape.name === 'Z') {
+          newShape = new Tetromino(shapeNames[Math.floor(Math.random() * shapeNames.length)])
+        }
+      }
+    }
+
 
     shapeQueue.push(newShape)
 
@@ -637,7 +655,9 @@ function init() {
   function sortHighScores() {
     highScores.sort((a,b) => {
       // b.score - a.score
-      return a.score > b.score ?  -1 : 1
+      if (a.score > b.score) return -1
+      if (a.score < b.score) return 1
+      if (a.name.toLowerCase() < b.name.toLowerCase()) return 0
     })
   }
 
@@ -651,7 +671,6 @@ function init() {
   }
 
   function saveHighScores() {
-    console.log(highScores)
     for (var i = 1; i <= highScores.length; i++) {
       localStorage.setItem(`player${i}Name`, highScores[i-1].name)
       localStorage.setItem(`player${i}Score`, highScores[i-1].score)
@@ -668,6 +687,7 @@ function init() {
       for (let i = 1; i <= highScores.length; i++) {
         localStorage.setItem(`player${i}Name`, `Player ${i}`)
         localStorage.setItem(`player${i}Score`, 0)
+        highScores[i] = {name: `Player ${i}`, score: 0}
       }
     }
 
@@ -733,6 +753,14 @@ function init() {
     })
 
     start1Player.addEventListener('click', gameStart)
+
+    start2Player.addEventListener('click', () => {
+      if (window.innerWidth < 1024) {
+        window.alert('2 Player mode requires a larger screen')
+      } else {
+
+      }
+    })
 
     instructionsButton.addEventListener('click', () => {
       toggleVisibility(instructions)
