@@ -140,7 +140,7 @@ main {
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.shape {
+.shape1 {
   /* background: grey; */
   border: 1px solid black;
   /* border: none; */
@@ -149,7 +149,23 @@ main {
   border-radius: 3px;
 }
 
-.shape-ghost {
+.shape2 {
+  /* background: grey; */
+  border: 1px solid black;
+  /* border: none; */
+  /* transition: 1s; */
+  opacity: 0.9 !important;
+  border-radius: 3px;
+}
+
+.shape-ghost1 {
+  border: 1px solid black;
+  /* border: none; */
+  opacity: 0.25;
+  border-radius: 3px;
+}
+
+.shape-ghost2 {
   border: 1px solid black;
   /* border: none; */
   opacity: 0.25;

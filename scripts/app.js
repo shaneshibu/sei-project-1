@@ -54,7 +54,10 @@ const shapeQueue = {
   1: [],
   2: []
 }
-let activeShape = null
+const activeShape = {
+  1: null,
+  2: null
+}
 const displayMessages = ['You Win!', 'You Lose', 'Game Over']
 let theme = null
 const gameSpeed = {
@@ -296,15 +299,15 @@ function init() {
   }
 
   function selectNextShape(player) {
-    activeShape = shapeQueue[player].shift()
+    activeShape[player] = shapeQueue[player].shift()
     playerIndexes[player] = []
-    activeShape.positions.forEach(position => playerIndexes[player].push(position))
+    activeShape[player].positions.forEach(position => playerIndexes[player].push(position))
     for (let i = 0; i < playerIndexes[player].length; i++) {
-      squares[player][playerIndexes[player][i]].classList.add('shape')
+      squares[player][playerIndexes[player][i]].classList.add(`shape${player}`)
     }
     for (let i = 0; i < thisCSS.cssRules.length; i++) {
-      if (thisCSS.cssRules[i].selectorText === '.shape' || thisCSS.cssRules[i].selectorText === '.shape-ghost') {
-        thisCSS.cssRules[i].style['backgroundColor'] = activeShape.color
+      if (thisCSS.cssRules[i].selectorText === `.shape${player}` || thisCSS.cssRules[i].selectorText === `.shape-ghost${player}`) {
+        thisCSS.cssRules[i].style['backgroundColor'] = activeShape[player].color
       }
     }
   }
@@ -321,14 +324,14 @@ function init() {
       }
     }
     for (let i = 0; i < ghostIndexes[player].length; i++) {
-      squares[player][ghostIndexes[player][i]].classList.add('shape-ghost')
+      squares[player][ghostIndexes[player][i]].classList.add(`shape-ghost${player}`)
     }
   }
 
   function freezeCurrentShape(player) {
 
     for (let i = 0; i < playerIndexes[player].length; i++) {
-      squares[player][playerIndexes[player][i]].classList.replace('shape', 'shape-inactive')
+      squares[player][playerIndexes[player][i]].classList.replace(`shape${player}`, 'shape-inactive')
     }
   }
 
@@ -410,9 +413,9 @@ function init() {
 
   function updateGrid(player) {
 
-    squares[player].forEach(square => square.classList.remove('shape-ghost'))
-    squares[player].forEach(square => square.classList.remove('shape'))
-    playerIndexes[player].forEach(index => squares[player][index].classList.add('shape'))
+    squares[player].forEach(square => square.classList.remove(`shape-ghost${player}`))
+    squares[player].forEach(square => square.classList.remove(`shape${player}`))
+    playerIndexes[player].forEach(index => squares[player][index].classList.add(`shape${player}`))
     displayGhost(player)
   }
 
@@ -439,8 +442,8 @@ function init() {
         }
         break
       case 'ArrowUp':
-        if (activeShape.name !== 'O') {
-          rotatedPositions1 = activeShape.rotate(playerIndexes[1]).slice()
+        if (activeShape[1].name !== 'O') {
+          rotatedPositions1 = activeShape[1].rotate(playerIndexes[1]).slice()
           //console.log(canRotate(playerIndexes, rotatedPositions))
           if (canRotate(playerIndexes[1], rotatedPositions1, 1)) {
             playerIndexes[1] = []
@@ -473,8 +476,8 @@ function init() {
         break
       case 'W':
       case 'w':
-        if ((players === 2) && activeShape.name !== 'O') {
-          rotatedPositions2 = activeShape.rotate(playerIndexes[2]).slice()
+        if ((players === 2) && activeShape[2].name !== 'O') {
+          rotatedPositions2 = activeShape[2].rotate(playerIndexes[2]).slice()
           if (canRotate(playerIndexes[2], rotatedPositions2, 2)) {
             playerIndexes[2] = []
             rotatedPositions2.forEach(position => playerIndexes[2].push(position))
@@ -517,7 +520,7 @@ function init() {
 
     gridUpdateTimerId[player] = setInterval(() => {
       updateGrid(player)
-    }, 50)
+    }, 100)
 
   }
 
@@ -653,7 +656,7 @@ function init() {
       selectNextShape(i)
       displayQueue(i)
     }
-    console.log(players)
+    // console.log(players)
     window.addEventListener('keydown', (e) => {
       handleKeyDown(e, players)
     })
@@ -756,13 +759,13 @@ function init() {
   function resetGrid() {
 
     squares[1].forEach(square => {
-      square.classList.remove('shape')
-      square.classList.remove('shape-ghost')
+      square.classList.remove('shape1')
+      square.classList.remove('shape-ghost1')
       square.classList.remove('shape-inactive')
     })
     squares[2].forEach(square => {
-      square.classList.remove('shape')
-      square.classList.remove('shape-ghost')
+      square.classList.remove('shape2')
+      square.classList.remove('shape-ghost2')
       square.classList.remove('shape-inactive')
     })
   }
@@ -805,11 +808,11 @@ function init() {
         if (thisCSS.cssRules[i].selectorText === '.grid-item') {
           thisCSS.cssRules[i].style['border'] = '1px solid rgba(0, 0, 0, 0.1)'
         }
-        if (thisCSS.cssRules[i].selectorText === '.shape') {
+        if (thisCSS.cssRules[i].selectorText === '.shape1' || thisCSS.cssRules[i].selectorText === '.shape2') {
           thisCSS.cssRules[i].style['border'] = '1px solid black'
           thisCSS.cssRules[i].style['box-shadow'] = 'none'
         }
-        if (thisCSS.cssRules[i].selectorText === '.shape-ghost') {
+        if (thisCSS.cssRules[i].selectorText === '.shape-ghost1' || thisCSS.cssRules[i].selectorText === '.shape-ghost2') {
           thisCSS.cssRules[i].style['border'] = '1px solid black'
         }
         if (thisCSS.cssRules[i].selectorText === '.shape-inactive') {
@@ -834,11 +837,11 @@ function init() {
         if (thisCSS.cssRules[i].selectorText === '.grid-item') {
           thisCSS.cssRules[i].style['border'] = '1px solid rgba(255, 255, 255, 0.9)'
         }
-        if (thisCSS.cssRules[i].selectorText === '.shape') {
+        if (thisCSS.cssRules[i].selectorText === '.shape1' || thisCSS.cssRules[i].selectorText === '.shape2') {
           thisCSS.cssRules[i].style['border'] = '1px solid white'
           thisCSS.cssRules[i].style['box-shadow'] = '0px 0px 10px 2px rgba(0,168,255,0.75)'
         }
-        if (thisCSS.cssRules[i].selectorText === '.shape-ghost') {
+        if (thisCSS.cssRules[i].selectorText === '.shape-ghost1' || thisCSS.cssRules[i].selectorText === '.shape-ghost2') {
           thisCSS.cssRules[i].style['border'] = '1px solid white'
         }
         if (thisCSS.cssRules[i].selectorText === '.shape-inactive') {
