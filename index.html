@@ -5,11 +5,23 @@
     <title>Project 1</title>
     <link rel="stylesheet" href="styles/style.css">
     <script src="scripts/app.js" charset="utf-8"></script>
-    <link href="https://fonts.googleapis.com/css?family=VT323&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css?family=VT323&display=swap" rel="stylesheet">
+    <script defer src="https://use.fontawesome.com/releases/v5.8.2/js/all.js" integrity="sha384-DJ25uNYET2XCl5ZF++U8eNxPWqcKohUUBUpKGlNLMchM7q4Wjg2CUpjHLaL8yYPH" crossorigin="anonymous"></script>
   </head>
   <body>
     <main>
       <div id="load-page">
+        <div class="bgm">
+          <audio id="music" src="assets/bgm.mp3"></audio>
+          <div id="mute">
+            <i class="fas fa-volume-mute"></i>
+          </div>
+          <div id="play">
+            <i class="fas fa-music"></i>
+          </div>
+
+
+        </div>
         <h1>Tetris</h1>
         <div id="start-game">
           <p id="start-game-button">Start Game</p>

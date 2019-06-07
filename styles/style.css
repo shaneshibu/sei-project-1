@@ -28,6 +28,13 @@ main {
   flex-flow: column wrap;
   align-content: center;
 }
+.bgm {
+  display: flex;
+  justify-content: flex-end;
+}
+#mute {
+  display: none;
+}
 
 #load-page {
   display: flex;
@@ -288,7 +295,7 @@ footer > p {
   }
 
   .message {
-
+    width: 50%;
   }
 
   aside {

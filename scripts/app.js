@@ -206,8 +206,8 @@ function init() {
   const start2Player = document.querySelector('#start2Player')
   const player1Tile = document.querySelector('#player1')
   const player2Tile = document.querySelector('#player2')
-  message[1] = document.querySelector('#gameboard1 p.message')
-  message[2] = document.querySelector('#gameboard2 p.message')
+  message[1] = document.querySelector('#message1')
+  message[2] = document.querySelector('#message2')
   const instructionsButton = document.querySelector('#instructions-button')
   const instructions = document.querySelector('#instructions')
   const highScoreButton = document.querySelector('#high-score-button')
@@ -218,6 +218,9 @@ function init() {
   scoreSpans[2] = document.querySelector('#score2')
   timeSpans[1] = document.querySelector('#timespan1')
   timeSpans[2] = document.querySelector('#timespan2')
+  const mute = document.querySelector('#mute')
+  const play = document.querySelector('#play')
+  const music = document.querySelector('audio')
 
 
   function generateGrid(players) {
@@ -672,7 +675,7 @@ function init() {
     stopCheckLoss(player)
     stopDropShapes(player)
     resetGameSpeed()
-    displayMessage()
+    displayMessage(player)
     window.addEventListener('click', goBackToLoadPage)
     window.removeEventListener('keydown', handleKeyDown)
   }
@@ -882,6 +885,23 @@ function init() {
         changeTheme(theme)
       })
     })
+
+
+    mute.addEventListener('click', () => {
+      mute.style.display = 'none'
+      play.style.display = 'inline'
+      music.pause()
+      console.log('pause')
+    })
+
+    play.addEventListener('click', () => {
+      mute.style.display = 'inline'
+      play.style.display = 'none'
+      music.play()
+      music.loop()
+      console.log('play')
+    })
+
 
 
   }
