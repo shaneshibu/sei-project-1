@@ -7,6 +7,17 @@ body {
   display: flex;
   flex-flow: row wrap;
   margin: 0;
+  font-family: 'VT323', monospace;
+  /* background-color: #DFDBE5; */
+  background: linear-gradient(270deg, #40e0d0, #0000ff, #ffa500, #ffff00, #008000, #800080, #ff0000);
+background-size: 1400% 1400%;
+
+animation: slide-background 60s /*ease*/ infinite;
+}
+@keyframes slide-background {
+   0%{background-position:0% 50%}
+   50%{background-position:100% 50%}
+   100%{background-position:0% 50%}
 }
 
 main {
@@ -22,8 +33,27 @@ main {
   display: flex;
   flex-direction: column;
   text-align: center;
-  max-width: 450px;
+  min-width: 50%;
+  /* max-width: 450px; */
+  max-width: 80vw;
+  height: 100%;
 }
+
+#load-page h1 {
+  font-size: 36px;
+}
+
+#load-page p {
+  font-size: 20px;
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+#load-page small {
+  font-size: 18px;
+}
+
 
 #start-game {
   display: flex;
@@ -194,7 +224,7 @@ footer {
 }
 
 footer > p {
-  color: rgba(0, 0, 0, 0.5);
+  /* color: rgba(0, 0, 0, 0.5); */
   margin: 0 auto;
 }
 
@@ -223,6 +253,18 @@ footer > p {
 
   main {
 
+  }
+
+  #load-page h1 {
+    font-size: 48px;
+  }
+
+  #load-page p {
+    font-size: 36px;
+  }
+
+  #load-page small {
+    font-size: 24px;
   }
 
   #player1 {

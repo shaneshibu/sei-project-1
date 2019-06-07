@@ -572,12 +572,6 @@ function init() {
     if (grid2ShouldUpdate) updateGrid(2)
   }
 
-  function savePreviousPosition(indexes) {
-    for (let i = 0; i < indexes.length; i++) {
-      previousIndexes[i] = indexes[i]
-    }
-  }
-
   function dropShapes(player) {
 
     canMoveCheckTimerId[player] = setInterval(() => {
@@ -587,7 +581,7 @@ function init() {
         selectNextShape(player)
         displayQueue(player)
       }
-    },200)
+    },100)
 
     dropTimerId[player] = setInterval(() => {
       //savePreviousPosition(playerIndexes)
@@ -913,9 +907,70 @@ function init() {
 
   function changeTheme(theme) {
     if (theme === 'classic') {
-      document.body.style.backgroundColor = 'white'
+
+      for (let i = 0; i < thisCSS.cssRules.length; i++) {
+        if (thisCSS.cssRules[i].selectorText === 'body') {
+          thisCSS.cssRules[i].style['background'] = 'linear-gradient(270deg, #40e0d0, #0000ff, #ffa500, #ffff00, #008000, #800080, #ff0000)'
+          thisCSS.cssRules[i].style['color'] = 'black'
+        }
+        if (thisCSS.cssRules[i].selectorText === '#load-page p') {
+          thisCSS.cssRules[i].style['border'] = '1px solid black'
+        }
+        if (thisCSS.cssRules[i].selectorText === '.grid') {
+          thisCSS.cssRules[i].style['border'] = '0.5px solid black'
+          this.cssRules[i].style['box-shadow'] = 'none'
+        }
+        if (thisCSS.cssRules[i].selectorText === '.grid-item') {
+          thisCSS.cssRules[i].style['border'] = '1px solid rgba(0, 0, 0, 0.1)'
+        }
+        if (thisCSS.cssRules[i].selectorText === '.shape') {
+          thisCSS.cssRules[i].style['border'] = '1px solid black'
+          this.cssRules[i].style['box-shadow'] = 'none'
+        }
+        if (thisCSS.cssRules[i].selectorText === '.shape-ghost') {
+          thisCSS.cssRules[i].style['border'] = '1px solid black'
+        }
+        if (thisCSS.cssRules[i].selectorText === '.shape-inactive') {
+          thisCSS.cssRules[i].style['background'] = 'rgba(0, 0, 0, 0.3)'
+        }
+        // if (thisCSS.cssRules[i].selectorText === 'footer > p') {
+        //   thisCSS.cssRules[i].style['color'] = 'black'
+        //   thisCSS.cssRules[i].style['color'] = 'rgba(0, 0, 0, 0.3)'
+        // }
+      }
+
     } else {
-      document.body.style.backgroundColor = 'black'
+
+      for (let i = 0; i < thisCSS.cssRules.length; i++) {
+        if (thisCSS.cssRules[i].selectorText === 'body') {
+          thisCSS.cssRules[i].style['background'] = '#111'
+          thisCSS.cssRules[i].style['color'] = 'rgba(0,168,255,1)'
+        }
+        if (thisCSS.cssRules[i].selectorText === '#load-page p') {
+          thisCSS.cssRules[i].style['border'] = '1px solid rgba(0,168,255,0.75)'
+        }
+        if (thisCSS.cssRules[i].selectorText === '.grid') {
+          thisCSS.cssRules[i].style['border'] = '0.5px solid white'
+          this.cssRules[i].style['box-shadow'] = '0px 0px 10px 2px rgba(0,168,255,0.75)'
+        }
+        if (thisCSS.cssRules[i].selectorText === '.grid-item') {
+          thisCSS.cssRules[i].style['border'] = '1px solid rgba(255, 255, 255, 0.9)'
+        }
+        if (thisCSS.cssRules[i].selectorText === '.shape') {
+          thisCSS.cssRules[i].style['border'] = '1px solid white'
+          this.cssRules[i].style['box-shadow'] = '0px 0px 10px 2px rgba(0,168,255,0.75)'
+        }
+        if (thisCSS.cssRules[i].selectorText === '.shape-ghost') {
+          thisCSS.cssRules[i].style['border'] = '1px solid white'
+        }
+        if (thisCSS.cssRules[i].selectorText === '.shape-inactive') {
+          thisCSS.cssRules[i].style['background'] = 'rgba(255, 255, 255, 0.3)'
+        }
+        // if (thisCSS.cssRules[i].selectorText === 'footer > p') {
+        //   thisCSS.cssRules[i].style['color'] = 'white'
+        //   thisCSS.cssRules[i].style['color'] = 'rgba(255, 255, 255, 0.3)'
+        // }
+      }
     }
   }
 
