@@ -50,7 +50,7 @@ main {
 }
 
 #start2Player {
-  display: none !important;
+  display: none;
 }
 
 #player1 {
@@ -132,7 +132,7 @@ main {
 }
 
 .message {
-  display: none;
+  /* display: none; */
   position: absolute;
   margin: 0;
   width: 100%;
@@ -143,6 +143,14 @@ main {
   font-size: 40px;
   font-weight: bold;
   z-index: 2;
+}
+
+#message1 {
+  display: none;
+}
+
+#message2 {
+  display: none;
 }
 
 aside {
@@ -262,7 +270,6 @@ footer > p {
   .shape-queue > div {
     height: 85px;
     width: 85px;
-    /* background-image: url('../assets/I.png'); */
     background-repeat: no-repeat;
     background-position: center;
   }
@@ -286,7 +293,31 @@ footer > p {
 
 /* DESKTOPS */
 @media screen and (min-width: 1024px) {
- body {
-     /* background: green; */
-   }
+  body {
+    /* background: green; */
+  }
+
+  .player-tile {
+    width: auto;
+  }
+
+  .game-board {
+    min-width: 360px;
+    max-width: 450px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  aside {
+    min-width: 115px;
+    max-width: 350px;
+  }
+
+  #player1 {
+    /* margin-right: 2%; */
+  }
+
+  #player2 {
+    /* margin-left: 2%; */
+  }
 }

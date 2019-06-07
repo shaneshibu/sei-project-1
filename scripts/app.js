@@ -1,25 +1,69 @@
 const height = 20
 const width = 10
-const squares = []
-let playerIndexes = []
+const squares = {
+  1: [],
+  2: []
+}
+// const squares1 = []
+// const squares2 = []
+const playerIndexes = {
+  1: [],
+  2: []
+}
 let previousIndexes = []
-let ghostIndexes = []
-const rows = []
-let dropTimerId = null
-let canMoveCheckTimerId = null
-let checkRowsTimerId = null
+const ghostIndexes = {
+  1: [],
+  2: []
+}
+const rows = {
+  1: [],
+  2: []
+}
+const dropTimerId = {
+  1: null,
+  2: null
+}
+const canMoveCheckTimerId = {
+  1: null,
+  2: null
+}
+const checkRowsTimerId = {
+  1: null,
+  2: null
+}
 // let keyDelayId = null
-let checkLossId = null
-let score = 0
-let player1Name = ''
-let player2Name = ''
-let gameTimerId = null
+const checkLossId = {
+  1: null,
+  2: null
+}
+const gridUpdateTimerId = {
+  1: null,
+  2: null
+}
+const score = {
+  1: 0,
+  2: 0
+}
+const playerName = {
+  1: '',
+  2: ''
+}
+const gameTimerId = {
+  1: null,
+  2: null
+}
 const shapeNames = ['I', 'O', 'T', 'J', 'L', 'S', 'Z']
-const shapeQueue = []
+const shapeQueue = {
+  1: [],
+  2: []
+}
 let activeShape = null
 const displayMessages = ['You Win!', 'You Lose', 'Game Over']
 let theme = null
-let gameSpeed = 1000
+const gameSpeed = {
+  1: 1000,
+  2: 1000
+}
 const highScores = [
   {
     name: '',
@@ -42,6 +86,26 @@ const highScores = [
     score: 0
   }
 ]
+const grids = {
+  1: null,
+  2: null
+}
+const shapeQueues = {
+  1: null,
+  2: null
+}
+const scoreSpans = {
+  1: null,
+  2: null
+}
+const timeSpans = {
+  1: null,
+  2: null
+}
+const message = {
+  1: null,
+  2: null
+}
 
 class Tetromino {
   constructor(name) {
@@ -132,52 +196,74 @@ class Tetromino {
 
 
 function init() {
-  // console.log()
-  const grid1 = document.querySelector('#grid1')
+
+  grids[1] = document.querySelector('#grid1')
+  grids[2] = document.querySelector('#grid2')
+  shapeQueues[1] = document.querySelector('#shapequeue1')
+  shapeQueues[2] = document.querySelector('#shapequeue2')
   const thisCSS = document.styleSheets[0]
   const loadPage = document.querySelector('#load-page')
   const startButton = document.querySelector('#start-game-button')
+  const startGameDiv = document.querySelectorAll('#start-game > small')
   const start1Player = document.querySelector('#start1Player')
   const start2Player = document.querySelector('#start2Player')
   const player1Tile = document.querySelector('#player1')
   const player2Tile = document.querySelector('#player2')
-  const message1 = document.querySelector('#gameboard1 p.message')
+  message[1] = document.querySelector('#gameboard1 p.message')
+  message[2] = document.querySelector('#gameboard2 p.message')
   const instructionsButton = document.querySelector('#instructions-button')
   const instructions = document.querySelector('#instructions')
   const highScoreButton = document.querySelector('#high-score-button')
   const highScoreDiv = document.querySelector('#high-scores')
   const highScoreResults = document.querySelectorAll('#high-scores > small')
   const themeButtons = document.querySelectorAll('footer > p')
+  scoreSpans[1] = document.querySelector('#score1')
+  scoreSpans[2] = document.querySelector('#score2')
+  timeSpans[1] = document.querySelector('#timespan1')
+  timeSpans[2] = document.querySelector('#timespan2')
 
-  function generateGrid() {
 
-    for (let i = 0; i < width * height; i++) {
-      const square = document.createElement('div')
-      square.classList.add('grid-item')
-      square.dataset.position = i
-      squares.push(square)
-      grid1.append(square)
+  function generateGrid(players) {
+
+    for (let i = 1; i <= players; i++) {
+      for (let j = 0; j < width * height; j++) {
+        const square = document.createElement('div')
+        square.classList.add('grid-item')
+        square.dataset.position = j
+        squares[i].push(square)
+        grids[i].append(square)
+      }
     }
 
     // fill rows array
-    for (let i = 0; i < height; i++) {
-      rows[i] = []
-      for (let j = 0; j < width; j++) {
-        rows[i].push( (i*width) + j )
-        //console.log(rows[i])
-        squares[(i*width) + j].dataset.row = i
-        squares[(i*width) + j].dataset.column = j
+    for (let i = 1; i <= players; i++) {
+      for (let j = 0; j < height; j++) {
+        rows[i][j] = []
+        for (let k = 0; k < width; k++) {
+          rows[i][j].push( (j*width) + k )
+          //console.log(rows[i])
+          squares[i][(j*width) + k].dataset.row = j
+          squares[i][(j*width) + k].dataset.column = k
+          // if (grids === 2) {
+          //   squares2[(i*width) + j].dataset.row = i
+          //   squares2[(i*width) + j].dataset.column = j
+          // }
+        }
       }
     }
+
   }
 
-  function generateShapeQueue() {
-    generateNewShape()
-    generateNewShape()
-    generateNewShape()
-    generateNewShape()
-    generateNewShape()
-    generateNewShape()
+  function generateShapeQueue(players) {
+    for (var i = 1; i <= players; i++) {
+      generateNewShape(i)
+      generateNewShape(i)
+      generateNewShape(i)
+      generateNewShape(i)
+      generateNewShape(i)
+      generateNewShape(i)
+    }
+
     //console.log(shapeQueue)
     // for (var i = 0; i < shapeQueue.length; i++) {
     //   shapeQueue[i]
@@ -186,14 +272,14 @@ function init() {
 
   }
 
-  function displayQueue() {
-    const s = document.querySelector('#shapequeue1')
+  function displayQueue(player) {
+    const s = shapeQueues[player]
     //console.log(s)
     //console.log(s.children.length)
 
     for (var i = 0; i < s.children.length; i++) {
       const div = s.children[i]
-      const name = shapeQueue[i].name
+      const name = shapeQueue[player][i].name
       // div.style.background = `'url('../assets/${name}.png')'`
       div.style.backgroundImage = 'url("./assets/' + name + '.png")'
       //console.log(div.style)
@@ -206,17 +292,17 @@ function init() {
     // fifth.innerText = shapeQueue[4].name
   }
 
-  function generateNewShape() {
+  function generateNewShape(player) {
 
     let newShape = new Tetromino(shapeNames[Math.floor(Math.random() * shapeNames.length)])
 
     // if 4 S or Z tetrominos created in a row, do not create another
     let count = 0
-    console.log(shapeQueue.length)
-    if (shapeQueue.length >= 4) {
-      for (var i = shapeQueue.length-1; i >= shapeQueue.length - 4; i--) {
-        console.log(shapeQueue[i])
-        if (shapeQueue[i].name === 'S' || shapeQueue[i].name === 'Z') {
+    //console.log(shapeQueue.length)
+    if (shapeQueue[player].length >= 4) {
+      for (var i = shapeQueue[player].length-1; i >= shapeQueue[player].length - 4; i--) {
+
+        if (shapeQueue[player][i].name === 'S' || shapeQueue[player][i].name === 'Z') {
           count++
         }
       }
@@ -228,17 +314,17 @@ function init() {
     }
 
 
-    shapeQueue.push(newShape)
+    shapeQueue[player].push(newShape)
 
   }
 
-  function selectNextShape() {
-    activeShape = shapeQueue.shift()
+  function selectNextShape(player) {
+    activeShape = shapeQueue[player].shift()
     //console.log(activeShape)
-    playerIndexes = []
-    activeShape.positions.forEach(position => playerIndexes.push(position))
-    for (let i = 0; i < playerIndexes.length; i++) {
-      squares[playerIndexes[i]].classList.add('shape')
+    playerIndexes[player] = []
+    activeShape.positions.forEach(position => playerIndexes[player].push(position))
+    for (let i = 0; i < playerIndexes[player].length; i++) {
+      squares[player][playerIndexes[player][i]].classList.add('shape')
       //console.log(squares)
     }
     // const color = colors[Math.floor(Math.random() * 4)]
@@ -258,63 +344,63 @@ function init() {
     //console.log(shapeQueue)
   }
 
-  function displayGhost() {
-    ghostIndexes = []
+  function displayGhost(player) {
+    ghostIndexes[player] = []
     //playerIndexes.forEach(index => ghostIndexes.push(index))
-    for (let i = 0; i < playerIndexes.length; i++) {
-      ghostIndexes.push(playerIndexes[i])
+    for (let i = 0; i < playerIndexes[player].length; i++) {
+      ghostIndexes[player].push(playerIndexes[player][i])
     }
 
-    while (canGoDown(ghostIndexes)) {
+    while (canGoDown(ghostIndexes, player)) {
       //ghostIndexes.forEach(index => index = index + width + width + width + width)
       //console.log(ghostIndexes)
-      for (let i = 0; i < ghostIndexes.length; i++) {
-        ghostIndexes[i] += width
+      for (let i = 0; i < ghostIndexes[player].length; i++) {
+        ghostIndexes[player][i] += width
       }
     }
-    for (let i = 0; i < ghostIndexes.length; i++) {
-      squares[ghostIndexes[i]].classList.add('shape-ghost')
+    for (let i = 0; i < ghostIndexes[player].length; i++) {
+      squares[player][ghostIndexes[player][i]].classList.add('shape-ghost')
     }
   }
 
-  function freezeCurrentShape() {
+  function freezeCurrentShape(player) {
 
-    for (let i = 0; i < playerIndexes.length; i++) {
-      squares[playerIndexes[i]].classList.replace('shape', 'shape-inactive')
+    for (let i = 0; i < playerIndexes[player].length; i++) {
+      squares[player][playerIndexes[player][i]].classList.replace('shape', 'shape-inactive')
       // squares[playerIndexes[i]].classList.add(color)
       // console.log(squares)
     }
   }
 
-  function isOccupied(num) {
-    return squares[num].classList.contains('shape-inactive')
+  function isOccupied(player, num) {
+    return squares[player][num].classList.contains('shape-inactive')
   }
 
-  function canGoLeft() {
+  function canGoLeft(player) {
     // playerIndexes.forEach((index) => {
     //   if (!(index % width > 0)) {
     //     return false
     //   }
     // })
-    for (let i = 0; i < playerIndexes.length; i++) {
-      const position = playerIndexes[i]
-      if (!(position % width > 0) || isOccupied(position-1)) {
+    for (let i = 0; i < playerIndexes[player].length; i++) {
+      const position = playerIndexes[player][i]
+      if (!(position % width > 0) || isOccupied(player, position-1)) {
         return false
       }
     }
     return true
   }
 
-  function canGoRight() {
+  function canGoRight(player) {
     // playerIndexes.forEach((index) => {
     //   if (!(index % width < width - 1)) {
     //     return false
     //   }
     // })
-    for (let i = 0; i < playerIndexes.length; i++) {
-      const position = playerIndexes[i]
+    for (let i = 0; i < playerIndexes[player].length; i++) {
+      const position = playerIndexes[player][i]
       // console.log(squares[position].classList)
-      if (!(position % width < width - 1) || isOccupied(position+1)) {
+      if (!(position % width < width - 1) || isOccupied(player, position+1)) {
         return false
       }
     }
@@ -322,15 +408,15 @@ function init() {
     // return playerIndexes[0] % width < width - 1 ? true : false
   }
 
-  function canGoDown(playerIndexes/*, square*/) {
+  function canGoDown(playerIndexes, player/*, square*/) {
 
     // if (playerIndexes) {
-      for (let i = playerIndexes.length-1; i >= 0; i--) {
-        const position = playerIndexes[i]
-        if (!(position + width < width * height) || isOccupied(position+width)) {
-          return false
-        }
+    for (let i = playerIndexes[player].length-1; i >= 0; i--) {
+      const position = playerIndexes[player][i]
+      if (!(position + width < width * height) || isOccupied(player, position+width)) {
+        return false
       }
+    }
     // } /else {
     //   const position = square.dataset.positions
     //   if (!(position + width < width * height) || isOccupied(position+width)) {
@@ -340,9 +426,9 @@ function init() {
     return true
   }
 
-  function canGoUp() {
-    for (let i = playerIndexes.length-1; i >= 0; i--) {
-      const position = playerIndexes[i]
+  function canGoUp(player) {
+    for (let i = playerIndexes[player].length-1; i >= 0; i--) {
+      const position = playerIndexes[player][i]
       if (position - width < 0) {
         //console.log('cant go up')
         return false
@@ -351,13 +437,13 @@ function init() {
     return true
   }
 
-  function canRotate(currentPositions, rotatedPositions) {
+  function canRotate(currentPositions, rotatedPositions, player) {
 
     for (var i = 0; i < currentPositions.length; i++) {
 
-      const before = squares[currentPositions[i]].dataset.column
-      const after = squares[rotatedPositions[i]].dataset.column
-      const afterRow = squares[rotatedPositions[i]].dataset.row
+      const before = squares[player][currentPositions[i]].dataset.column
+      const after = squares[player][rotatedPositions[i]].dataset.column
+      const afterRow = squares[player][rotatedPositions[i]].dataset.row
 
       //console.log((before))
       if ((before<3 && after>6) || (before>6 && after<3) || (afterRow<0)) {
@@ -367,84 +453,123 @@ function init() {
     return true
   }
 
-  function reachedTop() {
-    if (!canGoDown(playerIndexes) && !canGoUp()) {
+  function reachedTop(player) {
+    if (!canGoDown(playerIndexes, player) && !canGoUp(player)) {
       return true
     }
     return false
   }
 
-  function moveDown() {
-    for (let i = 0; i < playerIndexes.length; i++) {
-      playerIndexes[i] += width
+  function moveDown(player) {
+    for (let i = 0; i < playerIndexes[player].length; i++) {
+      playerIndexes[player][i] += width
     }
   }
 
-  function updateGrid(indexes) {
+  function updateGrid(/*indexes*/player) {
     // squares.forEach(square => square.classList.remove('shape'))
-    indexes.forEach(index => squares[index])
-    for (let i = 0; i < indexes.length; i++) {
-      //console.log(squares[indexes[i]])
-      squares[indexes[i]].classList.remove('shape')
-      // console.log(squares[indexes[i]])
-    }
-    squares.forEach(square => square.classList.remove('shape-ghost'))
-
-    playerIndexes.forEach(index => squares[index].classList.add('shape'))
-    displayGhost()
+    // indexes.forEach(index => squares[1][index])
+    // for (let i = 0; i < indexes.length; i++) {
+    //   //console.log(squares[indexes[i]])
+    //   squares[1][indexes[i]].classList.remove('shape')
+    //   // console.log(squares[indexes[i]])
+    // }
+    squares[player].forEach(square => square.classList.remove('shape-ghost'))
+    squares[player].forEach(square => square.classList.remove('shape'))
+    playerIndexes[player].forEach(index => squares[player][index].classList.add('shape'))
+    displayGhost(player)
     // console.log(document.querySelectorAll('.shape-ghost'))
     // console.log(playerIndexes)
     //console.log('updating grid ' + indexes)
   }
 
-  function handleKeyDown(e) {
-    let rotatedPositions = null
-    // console.log(e.key)
-    savePreviousPosition(playerIndexes)
-    let gridShouldUpdate = true
+  function handleKeyDown(e, players) {
+    let rotatedPositions1 = null
+    let rotatedPositions2 = null
+    //savePreviousPosition(playerIndexes)
+    let grid1ShouldUpdate = true
+    let grid2ShouldUpdate = false
+    if (players === 2) grid2ShouldUpdate = true
+    //console.log(e, players)
 
     switch (e.key) {
       case 'ArrowLeft':
-        if (canGoLeft()) {
-          for (let i = 0; i < playerIndexes.length; i++) {
-            playerIndexes[i]--
+        if (canGoLeft(1)) {
+          for (let i = 0; i < playerIndexes[1].length; i++) {
+            playerIndexes[1][i]--
           }
           // console.log(canGoLeft())
         }
         break
       case 'ArrowRight':
-        if (canGoRight()) {
-          for (let i = 0; i < playerIndexes.length; i++) {
-            playerIndexes[i]++
+        if (canGoRight(1)) {
+          for (let i = 0; i < playerIndexes[1].length; i++) {
+            playerIndexes[1][i]++
           }
         }
         // console.log(canGoRight())
         break
       case 'ArrowUp':
         if (activeShape.name !== 'O') {
-          rotatedPositions = activeShape.rotate(playerIndexes).slice()
+          rotatedPositions1 = activeShape.rotate(playerIndexes[1]).slice()
           //console.log(canRotate(playerIndexes, rotatedPositions))
-          if (canRotate(playerIndexes, rotatedPositions)) {
-            playerIndexes = []
-            rotatedPositions.forEach(position => playerIndexes.push(position))
+          if (canRotate(playerIndexes[1], rotatedPositions1, 1)) {
+            playerIndexes[1] = []
+            rotatedPositions1.forEach(position => playerIndexes[1].push(position))
           }
         } else {
-          gridShouldUpdate = false
+          grid1ShouldUpdate = false
         }
         break
       case 'ArrowDown':
-        if (canGoDown(playerIndexes)) {
-          moveDown()
+        if (canGoDown(playerIndexes[1], 1)) {
+          moveDown(1)
           // playerIndexes.forEach(item => {item += width})
         }
         break
+      case 'A':
+      case 'a':
+        if ((players === 2) && canGoLeft(2)) {
+          for (let i = 0; i < playerIndexes[2].length; i++) {
+            playerIndexes[2][i]--
+          }
+        }
+        break
+      case 'D':
+      case 'd':
+        if ((players === 2) && canGoRight(2)) {
+          for (let i = 0; i < playerIndexes[2].length; i++) {
+            playerIndexes[2][i]++
+          }
+        }
+        break
+      case 'W':
+      case 'w':
+        if ((players === 2) && activeShape.name !== 'O') {
+          rotatedPositions2 = activeShape.rotate(playerIndexes[2]).slice()
+          if (canRotate(playerIndexes[2], rotatedPositions2, 2)) {
+            playerIndexes[2] = []
+            rotatedPositions2.forEach(position => playerIndexes[2].push(position))
+          }
+        } else {
+          grid2ShouldUpdate = false
+        }
+        break
+      case 'S':
+      case 's':
+        if ((players === 2) && canGoDown(playerIndexes[2], 2)) {
+          moveDown(2)
+        }
+        break
       default:
-        console.log('was not arrow')
-        gridShouldUpdate = false
+        //console.log('was not arrow')
+        grid1ShouldUpdate = false
+        grid2ShouldUpdate = false
     }
     // console.log(previousIndexes)
     // console.log(playerIndexes)
-    if (gridShouldUpdate) updateGrid(previousIndexes)
+    if (grid1ShouldUpdate) updateGrid(1)
+    if (grid2ShouldUpdate) updateGrid(2)
   }
 
   function savePreviousPosition(indexes) {
@@ -453,37 +578,43 @@ function init() {
     }
   }
 
-  function dropShapes() {
+  function dropShapes(player) {
 
-    canMoveCheckTimerId = setInterval(() => {
-      if (!canGoDown(playerIndexes)) {
-        freezeCurrentShape()
-        generateNewShape()
-        selectNextShape()
-        displayQueue()
+    canMoveCheckTimerId[player] = setInterval(() => {
+      if (!canGoDown(playerIndexes, player)) {
+        freezeCurrentShape(player)
+        generateNewShape(player)
+        selectNextShape(player)
+        displayQueue(player)
       }
     },200)
 
-    dropTimerId = setInterval(() => {
-      savePreviousPosition(playerIndexes)
-      if (canGoDown(playerIndexes)) {
-        moveDown()
-        updateGrid(previousIndexes)
+    dropTimerId[player] = setInterval(() => {
+      //savePreviousPosition(playerIndexes)
+      if (canGoDown(playerIndexes, player)) {
+        moveDown(player)
+        //updateGrid(previousIndexes)
+        // updateGrid(player)
       } else {
         //generateNewShape()
       }
       //console.log(squares[182])
-    }, gameSpeed)
+    }, gameSpeed[player])
+
+    gridUpdateTimerId[player] = setInterval(() => {
+      updateGrid(player)
+    }, 50)
 
   }
 
-  function stopDropShapes() {
-    clearInterval(canMoveCheckTimerId)
-    clearInterval(dropTimerId)
+  function stopDropShapes(player) {
+    clearInterval(canMoveCheckTimerId[player])
+    clearInterval(dropTimerId[player])
+    clearInterval(gridUpdateTimerId)
   }
 
-  function moveRowsDown(row) {
-    const occupiedSquares = document.querySelectorAll('.shape-inactive')
+  function moveRowsDown(row, player) {
+    const occupiedSquares = grids[player].querySelectorAll('.shape-inactive')
     //console.log(occupiedSquares)
     for (let i = occupiedSquares.length-1; i >=0 ; i--) {
       const occupiedSquare = occupiedSquares[i]
@@ -491,25 +622,24 @@ function init() {
       const position = parseInt(occupiedSquare.dataset.position)
       if (occupiedSquareRow < row) {
         occupiedSquare.classList.remove('shape-inactive')
-        squares[(position+width)].classList.add('shape-inactive')
+        squares[player][(position+width)].classList.add('shape-inactive')
       }
     }
 
   }
 
-  function checkCompletedRows() {
+  function checkCompletedRows(player) {
     //let completed = true
-    const scoreSpan1 = document.querySelector('#score1')
     let filledRows = ''
 
-    checkRowsTimerId = setInterval(() => {
+    checkRowsTimerId[player] = setInterval(() => {
       filledRows = []
 
-      rows.forEach(row => {
+      rows[player].forEach(row => {
         let count = 0
         for (let i = row[0]; i < row[0] + width; i++) {
           //console.log(squares[i])
-          if (squares[i].classList.contains('shape-inactive')) {
+          if (squares[player][i].classList.contains('shape-inactive')) {
             count++
           }
           //console.log(squares[i])
@@ -517,123 +647,166 @@ function init() {
         //sconsole.log(squares[row[0]].dataset.row, count, row.length)
         //console.log(count)
         if (count===row.length) {
-          const filledRow = squares[row[0]].dataset.row
+          const filledRow = squares[player][row[0]].dataset.row
 
           for (let i = row[0]; i < row[0] + width; i++) {
-            squares[i].classList.remove('shape-inactive')
+            squares[player][i].classList.remove('shape-inactive')
             //console.log('full row')
           }
           filledRows.push(filledRow)
-          score += 10 * filledRows.length
-          scoreSpan1.innerText = score
+          score[player] += Math.floor(Math.pow(10,filledRows.length))
+          scoreSpans[player].innerText = score[player]
         }
       })
       //console.log(`filledRows at end ${filledRows.length}`)
       //console.log(filledRows)
       if (filledRows.length > 0) {
-        filledRows.forEach(row => moveRowsDown(row))
-        if (gameSpeed > 100) gameSpeed -= filledRows.length * 50
-        stopDropShapes()
-        dropShapes()
+        filledRows.forEach(row => moveRowsDown(row, player))
+        if (gameSpeed[player] > 200) gameSpeed[player] -= filledRows.length * 50
+        stopDropShapes(player)
+        dropShapes(player)
       }
     }, 200)
   }
 
-  function startGameTimer() {
-    const timeSpan1 = document.querySelector('#timespan1')
+  function startGameTimer(players) {
+
     //const timeSpan2 = document.querySelector('#timespan2')
     const gameStartTime = new Date()
-    let time = 0
-    gameTimerId = setInterval(() => {
+    const time = { 1: 0, 2: 0}
+
+    gameTimerId[1] = setInterval(() => {
+
       const gameCurrentTime = new Date()
-      time = (gameCurrentTime - gameStartTime)
-      time = Math.floor(time/1000)
-      let minutes = Math.floor(time / 60)
-      let seconds = time
-      minutes < 1 ? minutes = 0 : seconds = time - (minutes*60)
+      time[1] = (gameCurrentTime - gameStartTime)
+
+      time[1] = Math.floor(time[1] / 1000)
+      let minutes = Math.floor(time[1] / 60)
+      let seconds = time[1]
+      minutes < 1 ? minutes = 0 : seconds = time[1] - (minutes*60)
       if (minutes<10) minutes = '0' + minutes
       if (seconds<10) seconds = '0' + seconds
-      timeSpan1.innerText = `${minutes}:${seconds}`
+      timeSpans[1].innerText = `${minutes}:${seconds}`
       //timeSpan2.innerText = `${minutes}:${seconds}`
       // if (time>60) stopGameTimer()
     }, 1000)
 
+    if (players === 2) {
+      gameTimerId[2] = setInterval(() => {
+
+        const gameCurrentTime = new Date()
+        time[2] = (gameCurrentTime - gameStartTime)
+        time[2] = Math.floor(time[2] / 1000)
+        let minutes = Math.floor(time[2] / 60)
+        let seconds = time[2]
+        minutes < 1 ? minutes = 0 : seconds = time[2] - (minutes*60)
+        if (minutes<10) minutes = '0' + minutes
+        if (seconds<10) seconds = '0' + seconds
+        timeSpans[2].innerText = `${minutes}:${seconds}`
+        //timeSpan2.innerText = `${minutes}:${seconds}`
+        // if (time>60) stopGameTimer()
+      }, 1000)
+    }
+
+
+
   }
 
-  function stopGameTimer() {
-    clearInterval(gameTimerId)
+  function stopGameTimer(player) {
+    clearInterval(gameTimerId[player])
   }
 
-  function checkLoss() {
-    checkLossId = setInterval(() => {
+  function checkLoss(player) {
+    checkLossId[player] = setInterval(() => {
       //console.log(reachedTop())
-      if (reachedTop()) {
-        gameEnd()
+      if (reachedTop(player)) {
+        gameEnd(player)
       }
-    },100)
+    },200)
   }
 
-  function stopCheckLoss() {
-    clearInterval(checkLossId)
+  function stopCheckLoss(player) {
+    clearInterval(checkLossId[player])
   }
 
-  function gameStart() {
+  function resetGameSpeed() {
+    gameSpeed[1] = 1000
+    gameSpeed[2] = 1000
+  }
+
+  function gameStart(e) {
+    let players = null
+    e.target === start1Player ? players = 1 : players = 2
     toggleVisibility(loadPage)
-    toggleVisibility(start1Player)
-    //toggleVisibility(start2Player)
+    // toggleVisibility(start1Player)
+    // toggleVisibility(start2Player)
     toggleVisibility(player1Tile)
-    generateGrid()
-    getPlayerName()
+    if (players === 2) toggleVisibility(player2Tile)
+    generateGrid(players)
+    getPlayerName(players)
     //generateNewShape()
-    generateShapeQueue()
-    selectNextShape()
-    displayQueue()
-    window.addEventListener('keydown', handleKeyDown)
-    // moveShape()
-    dropShapes()
-    checkCompletedRows()
-    startGameTimer()
+    generateShapeQueue(players)
 
-    checkLoss()
+    for (let i = 1; i <= players; i++) {
+      selectNextShape(i)
+      displayQueue(i)
+    }
+    console.log(players)
+    window.addEventListener('keydown', (e) => {
+      handleKeyDown(e, players)
+    })
+    // moveShape()
+    for (let i = 1; i <= players; i++) {
+      dropShapes(i)
+      checkCompletedRows(i)
+    }
+
+    startGameTimer(players)
+
+    for (let i = 1; i <= players; i++) {
+      checkLoss(i)
+    }
 
   }
 
-  function gameEnd() {
-    stopGameTimer()
-    stopCheckLoss()
-    stopDropShapes()
+  function gameEnd(player) {
+    stopGameTimer(player)
+    stopCheckLoss(player)
+    stopDropShapes(player)
+    resetGameSpeed()
     displayMessage()
     window.addEventListener('click', goBackToLoadPage)
     window.removeEventListener('keydown', handleKeyDown)
   }
 
-  function getPlayerName() {
-    player1Name = window.prompt('Enter Your Name', 'Player 1')
+  function getPlayerName(players) {
+    playerName[1] = window.prompt('Player 1 Enter Your Name', 'Player 1')
+    if (players === 2) playerName[2] = window.prompt('Player 2 Enter Your Name', 'Player 2')
   }
 
-  function displayMessage() {
+  function displayMessage(player) {
     let highScoreMessage = ''
-    if (checkIfHighScore()) highScoreMessage = '\nNew High Score!\n' + score
-    message1.innerText = displayMessages[2] + highScoreMessage
-    for (var i = 0; i < thisCSS.cssRules.length; i++) {
-      if (thisCSS.cssRules[i].selectorText==='.message') {
+    if (checkIfHighScore(player)) highScoreMessage = '\nNew High Score!\n' + score[player]
+    message[player].innerText = displayMessages[2] + highScoreMessage
+    for (let i = 0; i < thisCSS.cssRules.length; i++) {
+      if (thisCSS.cssRules[i].selectorText===`#message${player}`) {
         thisCSS.cssRules[i].style['display'] = 'unset'
       }
     }
   }
 
-  function checkIfHighScore() {
+  function checkIfHighScore(player) {
     for (var i = 0; i < highScores.length; i++) {
-      if (score > highScores[i]['score']) {
+      if (score[player] > highScores[i]['score']) {
         //highScores.pop()
-        updateHighScore()
+        updateHighScore(player)
         return true
       }
     }
     return false
   }
 
-  function updateHighScore() {
+  function updateHighScore(player) {
     // const newHighScores = []
     //console.log(highScores)
     // for (var i = 0; i < highScores.length; i++) {
@@ -644,7 +817,7 @@ function init() {
     //   }
     // }
     highScores.pop()
-    highScores.push({name: player1Name, score: score})
+    highScores.push({name: playerName[player], score: score[player]})
     //console.log(highScores)
     sortHighScores()
     saveHighScores()
@@ -666,7 +839,7 @@ function init() {
       const playerName = highScores[i].name
       const playerScore = highScores[i].score
       highScoreResults[i].innerText = `${playerName} : ${playerScore}`
-      console.log(playerName, playerScore, highScoreResults[i])
+      //console.log(playerName, playerScore, highScoreResults[i])
     }
   }
 
@@ -694,7 +867,13 @@ function init() {
   }
 
   function resetGrid() {
-    squares.forEach(square => {
+
+    squares[1].forEach(square => {
+      square.classList.remove('shape')
+      square.classList.remove('shape-ghost')
+      square.classList.remove('shape-inactive')
+    })
+    squares[2].forEach(square => {
       square.classList.remove('shape')
       square.classList.remove('shape-ghost')
       square.classList.remove('shape-inactive')
@@ -706,7 +885,7 @@ function init() {
     // player2Tile.style.display = 'none'
     // loadPage.style.display = 'flex'
     toggleVisibility(player1Tile)
-    //toggleVisibility(player2Tile)
+    toggleVisibility(player2Tile)
     toggleVisibility(loadPage)
     resetGrid()
     window.removeEventListener('click', goBackToLoadPage)
@@ -752,15 +931,26 @@ function init() {
 
     })
 
-    start1Player.addEventListener('click', gameStart)
+    //start1Player.addEventListener('click', gameStart)
 
-    start2Player.addEventListener('click', () => {
-      if (window.innerWidth < 1024) {
-        window.alert('2 Player mode requires a larger screen')
-      } else {
+    // start2Player.addEventListener('click', () => {
+    //   if (window.innerWidth < 1024) {
+    //     window.alert('2 Player mode requires a larger screen')
+    //   } else {
+    //
+    //   }
+    // })
 
-      }
+    startGameDiv.forEach(button => {
+      button.addEventListener('click', (e) => {
+        //console.log(e.target)
+        if ((window.innerWidth < 1024) && (e.target === start2Player)) {
+          window.alert('2 Player mode requires a larger screen')
+        }
+        gameStart(e)
+      })
     })
+
 
     instructionsButton.addEventListener('click', () => {
       toggleVisibility(instructions)
@@ -776,6 +966,8 @@ function init() {
         changeTheme(theme)
       })
     })
+
+
   }
 
 
