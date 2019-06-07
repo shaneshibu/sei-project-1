@@ -4,13 +4,10 @@ const squares = {
   1: [],
   2: []
 }
-// const squares1 = []
-// const squares2 = []
 const playerIndexes = {
   1: [],
   2: []
 }
-let previousIndexes = []
 const ghostIndexes = {
   1: [],
   2: []
@@ -241,13 +238,8 @@ function init() {
         rows[i][j] = []
         for (let k = 0; k < width; k++) {
           rows[i][j].push( (j*width) + k )
-          //console.log(rows[i])
           squares[i][(j*width) + k].dataset.row = j
           squares[i][(j*width) + k].dataset.column = k
-          // if (grids === 2) {
-          //   squares2[(i*width) + j].dataset.row = i
-          //   squares2[(i*width) + j].dataset.column = j
-          // }
         }
       }
     }
@@ -263,33 +255,16 @@ function init() {
       generateNewShape(i)
       generateNewShape(i)
     }
-
-    //console.log(shapeQueue)
-    // for (var i = 0; i < shapeQueue.length; i++) {
-    //   shapeQueue[i]
-    // }
-
-
   }
 
   function displayQueue(player) {
     const s = shapeQueues[player]
-    //console.log(s)
-    //console.log(s.children.length)
 
     for (var i = 0; i < s.children.length; i++) {
       const div = s.children[i]
       const name = shapeQueue[player][i].name
-      // div.style.background = `'url('../assets/${name}.png')'`
       div.style.backgroundImage = 'url("./assets/' + name + '.png")'
-      //console.log(div.style)
     }
-
-    // first.innerText = shapeQueue[0].name
-    // second.innerText = shapeQueue[1].name
-    // third.innerText = shapeQueue[2].name
-    // fourth.innerText = shapeQueue[3].name
-    // fifth.innerText = shapeQueue[4].name
   }
 
   function generateNewShape(player) {
@@ -298,7 +273,6 @@ function init() {
 
     // if 4 S or Z tetrominos created in a row, do not create another
     let count = 0
-    //console.log(shapeQueue.length)
     if (shapeQueue[player].length >= 4) {
       for (var i = shapeQueue[player].length-1; i >= shapeQueue[player].length - 4; i--) {
 
@@ -320,40 +294,25 @@ function init() {
 
   function selectNextShape(player) {
     activeShape = shapeQueue[player].shift()
-    //console.log(activeShape)
     playerIndexes[player] = []
     activeShape.positions.forEach(position => playerIndexes[player].push(position))
     for (let i = 0; i < playerIndexes[player].length; i++) {
       squares[player][playerIndexes[player][i]].classList.add('shape')
-      //console.log(squares)
     }
-    // const color = colors[Math.floor(Math.random() * 4)]
-
-    // document.styleSheets[0].cssRules[1].style['backgroundColor'] = 'green'
-    // console.log(document.styleSheets[0].cssRules[1])
-    //console.log(thisCSS.cssRules)
-    //const cssRulesArray = []
-    //console.log(activeShape)
     for (let i = 0; i < thisCSS.cssRules.length; i++) {
       if (thisCSS.cssRules[i].selectorText === '.shape' || thisCSS.cssRules[i].selectorText === '.shape-ghost') {
         thisCSS.cssRules[i].style['backgroundColor'] = activeShape.color
       }
-      // cssRulesArray.push(thisCSS.cssRules[i])
-      // console.log(thisCSS.cssRules[i].selectorText)
     }
-    //console.log(shapeQueue)
   }
 
   function displayGhost(player) {
     ghostIndexes[player] = []
-    //playerIndexes.forEach(index => ghostIndexes.push(index))
     for (let i = 0; i < playerIndexes[player].length; i++) {
       ghostIndexes[player].push(playerIndexes[player][i])
     }
 
     while (canGoDown(ghostIndexes, player)) {
-      //ghostIndexes.forEach(index => index = index + width + width + width + width)
-      //console.log(ghostIndexes)
       for (let i = 0; i < ghostIndexes[player].length; i++) {
         ghostIndexes[player][i] += width
       }
@@ -367,8 +326,6 @@ function init() {
 
     for (let i = 0; i < playerIndexes[player].length; i++) {
       squares[player][playerIndexes[player][i]].classList.replace('shape', 'shape-inactive')
-      // squares[playerIndexes[i]].classList.add(color)
-      // console.log(squares)
     }
   }
 
@@ -377,11 +334,7 @@ function init() {
   }
 
   function canGoLeft(player) {
-    // playerIndexes.forEach((index) => {
-    //   if (!(index % width > 0)) {
-    //     return false
-    //   }
-    // })
+
     for (let i = 0; i < playerIndexes[player].length; i++) {
       const position = playerIndexes[player][i]
       if (!(position % width > 0) || isOccupied(player, position-1)) {
@@ -392,37 +345,24 @@ function init() {
   }
 
   function canGoRight(player) {
-    // playerIndexes.forEach((index) => {
-    //   if (!(index % width < width - 1)) {
-    //     return false
-    //   }
-    // })
+
     for (let i = 0; i < playerIndexes[player].length; i++) {
       const position = playerIndexes[player][i]
-      // console.log(squares[position].classList)
       if (!(position % width < width - 1) || isOccupied(player, position+1)) {
         return false
       }
     }
     return true
-    // return playerIndexes[0] % width < width - 1 ? true : false
   }
 
-  function canGoDown(playerIndexes, player/*, square*/) {
+  function canGoDown(playerIndexes, player) {
 
-    // if (playerIndexes) {
     for (let i = playerIndexes[player].length-1; i >= 0; i--) {
       const position = playerIndexes[player][i]
       if (!(position + width < width * height) || isOccupied(player, position+width)) {
         return false
       }
     }
-    // } /else {
-    //   const position = square.dataset.positions
-    //   if (!(position + width < width * height) || isOccupied(position+width)) {
-    //     return false
-    //   }
-    // }
     return true
   }
 
@@ -445,7 +385,6 @@ function init() {
       const after = squares[player][rotatedPositions[i]].dataset.column
       const afterRow = squares[player][rotatedPositions[i]].dataset.row
 
-      //console.log((before))
       if ((before<3 && after>6) || (before>6 && after<3) || (afterRow<0)) {
         return false
       }
@@ -466,31 +405,20 @@ function init() {
     }
   }
 
-  function updateGrid(/*indexes*/player) {
-    // squares.forEach(square => square.classList.remove('shape'))
-    // indexes.forEach(index => squares[1][index])
-    // for (let i = 0; i < indexes.length; i++) {
-    //   //console.log(squares[indexes[i]])
-    //   squares[1][indexes[i]].classList.remove('shape')
-    //   // console.log(squares[indexes[i]])
-    // }
+  function updateGrid(player) {
+
     squares[player].forEach(square => square.classList.remove('shape-ghost'))
     squares[player].forEach(square => square.classList.remove('shape'))
     playerIndexes[player].forEach(index => squares[player][index].classList.add('shape'))
     displayGhost(player)
-    // console.log(document.querySelectorAll('.shape-ghost'))
-    // console.log(playerIndexes)
-    //console.log('updating grid ' + indexes)
   }
 
   function handleKeyDown(e, players) {
     let rotatedPositions1 = null
     let rotatedPositions2 = null
-    //savePreviousPosition(playerIndexes)
     let grid1ShouldUpdate = true
     let grid2ShouldUpdate = false
     if (players === 2) grid2ShouldUpdate = true
-    //console.log(e, players)
 
     switch (e.key) {
       case 'ArrowLeft':
@@ -498,7 +426,6 @@ function init() {
           for (let i = 0; i < playerIndexes[1].length; i++) {
             playerIndexes[1][i]--
           }
-          // console.log(canGoLeft())
         }
         break
       case 'ArrowRight':
@@ -507,7 +434,6 @@ function init() {
             playerIndexes[1][i]++
           }
         }
-        // console.log(canGoRight())
         break
       case 'ArrowUp':
         if (activeShape.name !== 'O') {
@@ -524,7 +450,6 @@ function init() {
       case 'ArrowDown':
         if (canGoDown(playerIndexes[1], 1)) {
           moveDown(1)
-          // playerIndexes.forEach(item => {item += width})
         }
         break
       case 'A':
@@ -566,8 +491,6 @@ function init() {
         grid1ShouldUpdate = false
         grid2ShouldUpdate = false
     }
-    // console.log(previousIndexes)
-    // console.log(playerIndexes)
     if (grid1ShouldUpdate) updateGrid(1)
     if (grid2ShouldUpdate) updateGrid(2)
   }
@@ -584,15 +507,9 @@ function init() {
     },100)
 
     dropTimerId[player] = setInterval(() => {
-      //savePreviousPosition(playerIndexes)
       if (canGoDown(playerIndexes, player)) {
         moveDown(player)
-        //updateGrid(previousIndexes)
-        // updateGrid(player)
-      } else {
-        //generateNewShape()
       }
-      //console.log(squares[182])
     }, gameSpeed[player])
 
     gridUpdateTimerId[player] = setInterval(() => {
@@ -665,7 +582,6 @@ function init() {
 
   function startGameTimer(players) {
 
-    //const timeSpan2 = document.querySelector('#timespan2')
     const gameStartTime = new Date()
     const time = { 1: 0, 2: 0}
 
@@ -681,8 +597,6 @@ function init() {
       if (minutes<10) minutes = '0' + minutes
       if (seconds<10) seconds = '0' + seconds
       timeSpans[1].innerText = `${minutes}:${seconds}`
-      //timeSpan2.innerText = `${minutes}:${seconds}`
-      // if (time>60) stopGameTimer()
     }, 1000)
 
     if (players === 2) {
@@ -697,13 +611,8 @@ function init() {
         if (minutes<10) minutes = '0' + minutes
         if (seconds<10) seconds = '0' + seconds
         timeSpans[2].innerText = `${minutes}:${seconds}`
-        //timeSpan2.innerText = `${minutes}:${seconds}`
-        // if (time>60) stopGameTimer()
       }, 1000)
     }
-
-
-
   }
 
   function stopGameTimer(player) {
@@ -712,7 +621,6 @@ function init() {
 
   function checkLoss(player) {
     checkLossId[player] = setInterval(() => {
-      //console.log(reachedTop())
       if (reachedTop(player)) {
         gameEnd(player)
       }
@@ -732,13 +640,10 @@ function init() {
     let players = null
     e.target === start1Player ? players = 1 : players = 2
     toggleVisibility(loadPage)
-    // toggleVisibility(start1Player)
-    // toggleVisibility(start2Player)
     toggleVisibility(player1Tile)
     if (players === 2) toggleVisibility(player2Tile)
     generateGrid(players)
     getPlayerName(players)
-    //generateNewShape()
     generateShapeQueue(players)
 
     for (let i = 1; i <= players; i++) {
@@ -749,7 +654,6 @@ function init() {
     window.addEventListener('keydown', (e) => {
       handleKeyDown(e, players)
     })
-    // moveShape()
     for (let i = 1; i <= players; i++) {
       dropShapes(i)
       checkCompletedRows(i)
@@ -792,7 +696,6 @@ function init() {
   function checkIfHighScore(player) {
     for (var i = 0; i < highScores.length; i++) {
       if (score[player] > highScores[i]['score']) {
-        //highScores.pop()
         updateHighScore(player)
         return true
       }
@@ -801,27 +704,15 @@ function init() {
   }
 
   function updateHighScore(player) {
-    // const newHighScores = []
-    //console.log(highScores)
-    // for (var i = 0; i < highScores.length; i++) {
-    //   if (score > highScores[i]['score']) {
-    //     newHighScores.push({name: player1Name, score: score})
-    //   } else {
-    //     newHighScores.push(highScores[i])
-    //   }
-    // }
     highScores.pop()
     highScores.push({name: playerName[player], score: score[player]})
-    //console.log(highScores)
     sortHighScores()
     saveHighScores()
     displayHighScores()
-
   }
 
   function sortHighScores() {
     highScores.sort((a,b) => {
-      // b.score - a.score
       if (a.score > b.score) return -1
       if (a.score < b.score) return 1
       if (a.name.toLowerCase() < b.name.toLowerCase()) return 0
@@ -833,7 +724,6 @@ function init() {
       const playerName = highScores[i].name
       const playerScore = highScores[i].score
       highScoreResults[i].innerText = `${playerName} : ${playerScore}`
-      //console.log(playerName, playerScore, highScoreResults[i])
     }
   }
 
@@ -875,9 +765,6 @@ function init() {
   }
 
   function goBackToLoadPage() {
-    // player1Tile.style.display = 'none'
-    // player2Tile.style.display = 'none'
-    // loadPage.style.display = 'flex'
     toggleVisibility(player1Tile)
     toggleVisibility(player2Tile)
     toggleVisibility(loadPage)
@@ -893,16 +780,8 @@ function init() {
         } else {
           thisCSS.cssRules[i].style['display'] = 'none'
         }
-        //console.log(element.id, thisCSS.cssRules[i].style['display'])
       }
     }
-    // console.log(element, element.style.display)
-    // if (element.style.display === 'none') {
-    //   element.style.display = 'flex'
-    //   return
-    // } else {
-    //   element.style.display = 'none'
-    // }
   }
 
   function changeTheme(theme) {
@@ -918,14 +797,14 @@ function init() {
         }
         if (thisCSS.cssRules[i].selectorText === '.grid') {
           thisCSS.cssRules[i].style['border'] = '0.5px solid black'
-          this.cssRules[i].style['box-shadow'] = 'none'
+          thisCSS.cssRules[i].style['box-shadow'] = 'none'
         }
         if (thisCSS.cssRules[i].selectorText === '.grid-item') {
           thisCSS.cssRules[i].style['border'] = '1px solid rgba(0, 0, 0, 0.1)'
         }
         if (thisCSS.cssRules[i].selectorText === '.shape') {
           thisCSS.cssRules[i].style['border'] = '1px solid black'
-          this.cssRules[i].style['box-shadow'] = 'none'
+          thisCSS.cssRules[i].style['box-shadow'] = 'none'
         }
         if (thisCSS.cssRules[i].selectorText === '.shape-ghost') {
           thisCSS.cssRules[i].style['border'] = '1px solid black'
@@ -933,10 +812,6 @@ function init() {
         if (thisCSS.cssRules[i].selectorText === '.shape-inactive') {
           thisCSS.cssRules[i].style['background'] = 'rgba(0, 0, 0, 0.3)'
         }
-        // if (thisCSS.cssRules[i].selectorText === 'footer > p') {
-        //   thisCSS.cssRules[i].style['color'] = 'black'
-        //   thisCSS.cssRules[i].style['color'] = 'rgba(0, 0, 0, 0.3)'
-        // }
       }
 
     } else {
@@ -951,14 +826,14 @@ function init() {
         }
         if (thisCSS.cssRules[i].selectorText === '.grid') {
           thisCSS.cssRules[i].style['border'] = '0.5px solid white'
-          this.cssRules[i].style['box-shadow'] = '0px 0px 10px 2px rgba(0,168,255,0.75)'
+          thisCSS.cssRules[i].style['box-shadow'] = '0px 0px 10px 2px rgba(0,168,255,0.75)'
         }
         if (thisCSS.cssRules[i].selectorText === '.grid-item') {
           thisCSS.cssRules[i].style['border'] = '1px solid rgba(255, 255, 255, 0.9)'
         }
         if (thisCSS.cssRules[i].selectorText === '.shape') {
           thisCSS.cssRules[i].style['border'] = '1px solid white'
-          this.cssRules[i].style['box-shadow'] = '0px 0px 10px 2px rgba(0,168,255,0.75)'
+          thisCSS.cssRules[i].style['box-shadow'] = '0px 0px 10px 2px rgba(0,168,255,0.75)'
         }
         if (thisCSS.cssRules[i].selectorText === '.shape-ghost') {
           thisCSS.cssRules[i].style['border'] = '1px solid white'
@@ -966,10 +841,6 @@ function init() {
         if (thisCSS.cssRules[i].selectorText === '.shape-inactive') {
           thisCSS.cssRules[i].style['background'] = 'rgba(255, 255, 255, 0.3)'
         }
-        // if (thisCSS.cssRules[i].selectorText === 'footer > p') {
-        //   thisCSS.cssRules[i].style['color'] = 'white'
-        //   thisCSS.cssRules[i].style['color'] = 'rgba(255, 255, 255, 0.3)'
-        // }
       }
     }
   }
@@ -985,16 +856,6 @@ function init() {
       }
 
     })
-
-    //start1Player.addEventListener('click', gameStart)
-
-    // start2Player.addEventListener('click', () => {
-    //   if (window.innerWidth < 1024) {
-    //     window.alert('2 Player mode requires a larger screen')
-    //   } else {
-    //
-    //   }
-    // })
 
     startGameDiv.forEach(button => {
       button.addEventListener('click', (e) => {
