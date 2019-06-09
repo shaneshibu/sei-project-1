@@ -140,7 +140,7 @@ main {
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.shape1 {
+.shape {
   /* background: grey; */
   border: 1px solid black;
   /* border: none; */
@@ -158,7 +158,7 @@ main {
   border-radius: 3px;
 }
 
-.shape-ghost1 {
+.shape-ghost {
   border: 1px solid black;
   /* border: none; */
   opacity: 0.25;
@@ -192,6 +192,7 @@ main {
   /* height: 50px; */
   height: 0;
   top: calc(47.5% - 50px);
+  left: 50%;
   text-align: center;
   font-size: 40px;
   font-weight: bold;
@@ -311,7 +312,7 @@ footer > p {
   }
 
   .message {
-    width: 50%;
+    /* width: 50%; */
   }
 
   aside {
