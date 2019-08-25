@@ -96,7 +96,17 @@ class Tetromino {
 }
 ```
 
-Generating a new tetrimino then just involved create a new tetrimino class
+Generating a new tetrimino then just involved creating a new shape variable of the tetrimino class. The shape was chosen at random from an array that contained the shape names.
+
+```javascript
+const shapeNames = ['I', 'O', 'T', 'J', 'L', 'S', 'Z']
+
+function generateNewShape() {
+
+  let newShape = new Tetromino(shapeNames[Math.floor(Math.random() * shapeNames.length)])
+
+}
+```
 
 
 ## Wins
