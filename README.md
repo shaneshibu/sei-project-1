@@ -26,7 +26,7 @@ The project is currently deployed at http://shaneshibu.com/sei-project-1/
 
 The Tetris game requires players to strategically rotate, move, and drop a procession of Tetriminos that fall into the rectangular Matrix at increasing speeds. Players attempt to clear as many lines as possible by completing horizontal rows of blocks without empty space, but if the Tetriminos surpass the Skyline the game is over!
 
-![Tetris Game Screen](assets/screenshots/gamescreen2.gif)
+![Tetris Game Screen](assets/screenshots/gameScreen.gif)
 
 ## Controls
 
